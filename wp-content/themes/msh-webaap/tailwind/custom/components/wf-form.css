@@ -1,0 +1,190 @@
+/* ===========================
+   Onglets WS Form
+   =========================== */
+   
+#ws-form-1  ul.wsf-steps {
+    @apply mb-10;
+}
+
+/* ===========================
+   Sections WS Form
+   =========================== */
+
+/* Titres de section WS Form */
+#ws-form-1  fieldset.wsf-section > legend {
+    @apply text-lg font-semibold text-gray-900 mb-4;
+}
+
+/* Si tu veux réduire l’espace “top” global des sections */
+#ws-form-1 fieldset.wsf-section {
+    @apply mt-0 mb-4;
+}
+
+#ws-form-1 fieldset.wsf-section > legend {
+    @apply text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200;
+}
+
+
+
+/* ===========================
+   Boutons WS Form
+   =========================== */
+
+#ws-form-1 .bouton-fantome {
+    @apply invisible pointer-events-none;
+}
+
+#ws-form-1 .wrapper-repeater, #wsf-1-section-94 {
+    @apply bg-slate-50 border border-slate-100 rounded-3xl p-6 mb-4 relative;
+}
+
+#ws-form-1 button[data-action="wsf-tab_next"] i {
+    @apply inline-block ml-2;
+}
+
+#ws-form-1 button[data-action="wsf-tab_previous"] i {
+    @apply inline-block mr-2;
+}
+
+#ws-form-1 button[data-action="wsf-save"] i {
+    @apply inline-block mr-2;
+}
+
+#ws-form-1 button[data-action="add-team-member"] {
+    @apply inline-flex items-center text-primaire bg-primaire/20 box-border border border-primaire focus:ring-1 shadow-xs font-medium leading-5 rounded-3xl text-sm px-3 py-1.5 mt-2 focus:outline-none;
+}
+
+#ws-form-1 button[data-action="remove-team-member"] {
+    @apply inline-flex items-center text-red-500 bg-red-100 box-border border border-red-500 focus:ring-1 shadow-xs font-medium leading-5 rounded-3xl text-sm px-3 py-1.5 mt-2 focus:outline-none;
+
+}
+
+#ws-form-1 button[data-action="add-team-member"] i, #ws-form-1 button[data-action="remove-team-member"] i {
+    @apply inline-block mr-2;
+}
+
+
+/* ===========================
+   Alertes métier MSH – base
+   =========================== */
+
+.msh-alert {
+    @apply flex items-start gap-3
+           p-4 mb-6
+           rounded-r-xl
+           border-l-4
+           shadow-sm
+           text-sm leading-relaxed;
+  }
+  
+  .msh-alert-icon {
+    @apply flex-shrink-0 flex items-center justify-center
+           w-9 h-9 rounded-full;
+  }
+  
+  .msh-alert-icon i {
+    @apply text-lg;
+  }
+  
+  .msh-alert-content p {
+    @apply m-0;
+  }
+  
+  .msh-alert-title {
+    @apply block font-bold mb-1;
+  }
+  
+  .msh-alert-list {
+    @apply mt-3 p-4 rounded-lg
+           bg-white/60 border;
+  }
+  
+  .msh-alert-list li {
+    @apply flex items-start gap-2 mb-2;
+  }
+  
+  .msh-alert-list li:last-child {
+    @apply mb-0;
+  }
+  
+  .msh-alert-list li i {
+    @apply mt-1;
+  }
+  
+  .msh-alert-footer {
+    @apply mt-3 italic font-medium flex items-center gap-2;
+  }
+
+/* ===========================
+   Variante ECO
+   =========================== */
+
+.msh-alert-eco {
+    @apply bg-emerald-50 border-emerald-500 text-emerald-900;
+  }
+  
+.msh-alert-eco .msh-alert-icon {
+    @apply bg-emerald-100 text-emerald-600;
+}
+
+.msh-alert-eco .msh-alert-title {
+    @apply text-emerald-800;
+}
+
+.msh-alert-eco .msh-alert-list {
+    @apply border-emerald-100;
+}
+
+.msh-alert-eco .msh-alert-list li i {
+    @apply text-emerald-500;
+}
+
+/* ===========================
+   Variante WARNING
+   =========================== */
+
+   .msh-alert-warning {
+    @apply bg-amber-50 border-amber-500 text-amber-900;
+  }
+  
+  .msh-alert-warning .msh-alert-icon {
+    @apply bg-amber-100 text-amber-600;
+  }
+  
+  .msh-alert-warning .msh-alert-title {
+    @apply text-amber-700;
+  }
+  
+  .msh-alert-warning .msh-alert-highlight {
+    @apply font-semibold text-amber-800;
+  }
+  
+  .msh-alert-warning .msh-alert-emphasis {
+    @apply font-bold underline decoration-amber-300 decoration-2;
+  }
+
+
+/* ===========================
+   Variante INFO (Sky)
+   =========================== */
+
+.msh-alert-info {
+    @apply bg-sky-50 border-l-sky-500 text-sky-900;
+}
+
+.msh-alert-info .msh-alert-icon {
+    @apply bg-sky-100 text-sky-600;
+}
+
+.msh-alert-info .msh-alert-title {
+    @apply text-sky-800;
+}
+
+.msh-alert-info .msh-alert-highlight {
+    @apply font-semibold text-sky-700;
+}
+
+.msh-alert-info .msh-alert-emphasis {
+    @apply font-bold underline decoration-sky-300 decoration-2;
+}
+  

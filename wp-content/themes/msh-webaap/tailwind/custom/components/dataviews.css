@@ -1,0 +1,11 @@
+div[data-dataview="mes-brouillons"] table tbody tr{
+    @apply text-sm text-black;
+}
+
+div[data-dataview="mes-brouillons"] button[aria-label="View options"]{
+    @apply hidden;
+}
+
+form[data-id="9"] fieldset.wsf-section{
+    @apply !mt-0;
+}
