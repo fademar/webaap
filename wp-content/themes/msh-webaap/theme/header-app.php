@@ -1,8 +1,6 @@
 <?php
 /**
- * The header for the APP context (Dashboard, Forms, etc.)
- *
- * Displays all of the <head> section and opens the Body + Main Flex Wrapper.
+ * Header for test templates (no sidebar, topbar only)
  *
  * @package msh-webaap
  */
@@ -17,11 +15,16 @@
     <?php wp_head(); ?>
 </head>
 
-<body <?php body_class( 'bg-gray-100 text-gray-900 font-sans antialiased min-h-screen' ); ?>>
+<body <?php body_class( 'bg-slate-50 text-gray-900 font-sans antialiased min-h-screen' ); ?>>
 
 <?php wp_body_open(); ?>
 
-<div id="app-wrapper" class="flex min-h-screen relative">
+<?php get_template_part( 'template-parts/layout/topbar', null, [ 
+    'active_page' => is_page('dashboard') ? 'tous-les-projets' : (is_page('nouveau-projet') ? 'nouveau-projet' : (is_page('mes-projets') ? 'mes-projets' :
+    '')) 
+]); ?>
+
+<div id="app-wrapper" class="min-h-screen">
 
     <a href="#app-main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-4 focus:left-4 focus:p-4 focus:bg-white focus:text-blue-600 focus:rounded-lg focus:shadow-lg">
         <?php esc_html_e( 'Aller au contenu principal', 'msh-webaap' ); ?>

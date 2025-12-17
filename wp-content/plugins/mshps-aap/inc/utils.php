@@ -610,7 +610,7 @@ function mshps_aap_rest_get_projets( WP_REST_Request $request ) {
         $needs_html .= '</div>';
 
         $id = (int) $r['ID'];
-        $view_url = add_query_arg( [ 'projet_id' => $id ], home_url( '/dashboard/' ) );
+        $view_url = get_permalink( $id );
         $actions_html = '<a class="inline-flex items-center justify-center w-8 h-8 text-blue-700 bg-blue-50 rounded-md hover:bg-blue-100 transition-colors" href="' . esc_url( $view_url ) . '" title="Voir"><i class="fa-solid fa-eye"></i></a>';
 
         $data[] = [

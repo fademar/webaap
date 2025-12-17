@@ -1,120 +1,85 @@
 <?php
 /**
- * Template Name: Single Projet (Layout Vertical)
- * Template Post Type: projet
+ * Template Name: MSH - Test
  */
 
-if ( ! is_user_logged_in() ) auth_redirect();
-
-// --- LOGIQUE METIER (Droits, etc.) ---
-$user_id = get_current_user_id();
-$can_view = current_user_can('edit_others_posts') || (int) $post->post_author === $user_id;
-if ( ! $can_view ) { wp_safe_redirect( home_url( '/dashboard/' ) ); exit; }
-
-
-while ( have_posts() ) : the_post();
-    $projet_id = get_the_ID();
-
-    // 1. RÉCUPÉRATION DE TOUS LES CHAMPS ACF (Une seule fois pour la performance)
-    $all_fields = get_field_objects( $projet_id );
-    
-    // 2. CONFIGURATION : QUELS CHAMPS DANS QUEL ONGLET ?
-    $fields_mapping = [
-        'projet' => [
-            'title'  => 'Vue d’ensemble',
-            'fields' => [
-                'tax_proj_vague',
-                'tax_proj_type',
-                'proj_ref',
-                'proj_acronyme',
-                'proj_resume_court',
-                'proj_disciplines',
-                'proj_mots_cles',
-                'proj_porteur',      // Déclenchera l'affichage spécial "Équipe"
-                // 'proj_porteurs',  // Pas besoin de le lister, il est géré par proj_porteur
-                'proj_objectifs',
-                'proj_methodologie',
-                'proj_etat_art',
-                'proj_interdisciplinarite',
-                'proj_partenariat',
-                'cand_rgpd',
-                'cand_eco_engagement',
-                'cand_validation_finale'
-                ],
-        ],
-        'calendrier' => [
-            'title'  => 'Calendrier',
-            'fields' => [
-                'cand_date_debut',
-                'cand_date_fin',
-                'cand_date_event',
-                'cand_seances'
-            ]
-        ],
-        'budget' => [
-            'title'  => 'Budget et Financement',
-            'fields' => [
-                'cand_budget_total',
-                'cand_budget_detail',
-                'cand_cofinancements',
-                'cand_cofinancements_detail',
-                'suiv_budget' // Champ de suivi MSH
-            ]
-        ],
-        'communication' => [
-            'title'  => 'Plan de communication',
-            'fields' => [
-                'cand_kit_com',
-                'cand_com_justification'
-            ]
-        ],
-        'edition' => [
-            'title'  => 'Projet éditorial',
-            'fields' => [
-                'cand_edition', // Booléen
-                'cand_edition_details'
-            ]
-        ],
-        'plateformes' => [
-            'title'  => 'Usage des plateformes',
-            'fields' => [
-                'cand_plateformes', // Booléen
-                'cand_plateformes_details'
-            ]
-        ],
-        'evaluation' => [
-            'title'  => 'Évaluation scientifique',
-            'fields' => [] // À remplir plus tard avec vos champs d'évaluation
-        ]
-    ];
-
-
-
-    // Définition des onglets (Même logique)
-    $tab = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : 'projet';
-    $tabs = [
-        'projet'        => [ 'label' => 'Vue d’ensemble', 'icon' => 'fa-solid fa-chart-pie' ],
-        'calendrier'       => [ 'label' => 'Calendrier',        'icon' => 'fa-solid fa-calendar-days' ],
-        'budget'        => [ 'label' => 'Budget',         'icon' => 'fa-solid fa-euro-sign' ],
-        'communication' => [ 'label' => 'Communication',  'icon' => 'fa-solid fa-bullhorn' ],
-        'edition'       => [ 'label' => 'Édition',        'icon' => 'fa-solid fa-book' ],
-        'plateformes'   => [ 'label' => 'Plateformes',    'icon' => 'fa-solid fa-server' ],
-        'evaluation'    => [ 'label' => 'Évaluation',     'icon' => 'fa-solid fa-star' ],
-    ];
-
-    $status = get_post_status();
-    $statuses = function_exists('mshps_aap_projet_custom_statuses') ? mshps_aap_projet_custom_statuses() : [];
-    $status_label = $statuses[$status] ?? $status;
-    $ref = get_post_meta($projet_id, 'proj_ref', true);
-    ?>
-
-
-<?php get_header( 'app' ); ?>
+get_header('test'); 
+?>
 
 <div class="min-h-screen bg-slate-50">
+  <!-- Topbar (globale, sobre) -->
+  <header class="sticky top-0 z-40 border-b bg-white/80 backdrop-blur">
+    <div class="mx-auto max-w-screen-xl px-6 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="h-8 w-8 rounded-lg bg-slate-100"></div>
+        <div class="text-sm text-slate-600">Tableau de bord</div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <a href="#" class="inline-flex items-center rounded-lg border px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+          ← Retour à la liste
+        </a>
+        <div class="relative">
+  <button type="button" class="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800">
+        Actions
+        <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.7a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" />
+        </svg>
+    </button>
+
+    <!-- Dropdown -->
+    <div class="absolute right-0 mt-2 w-64 rounded-xl border bg-white shadow-lg">
+        <ul class="py-2 text-sm">
+        <li>
+        <!-- Bouton dans le dropdown Actions -->
+        <button data-open-status-modal>Changer le statut du projet</button>
+
+        </li>
+        <li>
+            <button class="w-full text-left px-4 py-2 hover:bg-slate-50">
+            Exporter le dossier (PDF)
+            </button>
+        </li>
+        <li>
+            <button class="w-full text-left px-4 py-2 hover:bg-slate-50">
+            Télécharger les pièces jointes
+            </button>
+        </li>
+
+        <li><hr class="my-2 border-slate-200" /></li>
+
+        <li>
+            <button class="w-full text-left px-4 py-2 hover:bg-slate-50">
+            Notifier le porteur
+            </button>
+        </li>
+        <li>
+            <button class="w-full text-left px-4 py-2 hover:bg-slate-50">
+            Demander des compléments
+            </button>
+        </li>
+
+        <li><hr class="my-2 border-slate-200" /></li>
+
+        <li>
+            <button class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50">
+            Archiver le projet
+            </button>
+        </li>
+        <li>
+            <button class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50">
+            Supprimer le projet
+            </button>
+        </li>
+        </ul>
+    </div>
+    </div>
+      </div>
+    </div>
+  </header>
 
   <!-- Page "document" -->
-  <main class="mx-auto max-w-[1400px] px-6 py-8">
+  <main class="mx-auto max-w-screen-xl px-6 py-8">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
       <!-- Colonne principale -->
       <article class="lg:col-span-10">
@@ -233,7 +198,7 @@ while ( have_posts() ) : the_post();
       </article>
 
       <!-- Sidebar (Notion-like : actions + navigation) -->
-      <aside class="sticky top-0 lg:col-span-2 space-y-6">
+      <aside class="lg:col-span-2 space-y-6">
         <section class="bg-white border rounded-2xl p-6">
           <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">
             Navigation
@@ -338,4 +303,7 @@ while ( have_posts() ) : the_post();
 </div>
 
 
-<?php endwhile; get_footer( 'app' ); ?>
+
+<?php
+get_footer('test');
+?>
