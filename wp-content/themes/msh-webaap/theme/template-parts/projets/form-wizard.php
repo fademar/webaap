@@ -31,7 +31,7 @@ $shortcode .= ']';
 ?>
 
 <div class="flex items-center justify-between mb-8">
-    <h2 class="text-2xl font-bold text-gray-800">Formulaire de candidature<span class="text-primaire font-bold"> • Émergence</span></h2>
+    <h2 class="text-2xl font-bold text-gray-800">Formulaire de candidature<span class="text-primaire font-bold"> • <?php echo $ptype_label; ?></span></h2>
     <a href="<?php echo home_url('/nouveau-projet'); ?>" class="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-full hover:bg-red-50 hover:text-red-600 transition-colors">
         <i class="fa-solid fa-times"></i>
     </a>

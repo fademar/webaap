@@ -904,58 +904,83 @@ function mshps_prefill_user_info_in_form($form, $preview) {
 }
 
 /**
- * WS Form (Post Management) : post-traitement après création/mise à jour du post.
- *
- * Objectifs (CPT ACF "projet") :
- * - Assigner automatiquement la vague courante (taxonomie projet_vague) si absente
- * - Générer la référence proj_ref dès le dépôt si absente
- * - Utiliser la référence comme slug (post_name)
- *
- * Hook fourni par l'add-on WS Form Post : wsf_action_post_post_meta
- * Arguments: ($form, $submit, $config, $post_id, $list_id, $taxonomy_tags)
+ * Hook WS Form : Déclenche la génération de référence APRES soumission
+ * Priorité 50 : Indispensable pour que les taxonomies (Vague/Type) soient déjà là.
  */
-add_action( 'wsf_action_post_post_meta', 'mshps_aap_wsform_project_post_process', 20, 6 );
+add_action( 'wsf_action_post_post_meta', 'mshps_aap_wsform_project_post_process', 50, 6 );
+
 function mshps_aap_wsform_project_post_process( $form, $submit, $config, $post_id, $list_id, $taxonomy_tags ): void {
-	$post_id = (int) $post_id;
-	if ( ! $post_id || (string) $list_id !== 'projet' ) {
-		return;
-	}
+    
+    // 1. Sécurité : Est-ce bien un projet ?
+    if ( ! $post_id || get_post_type( $post_id ) !== 'projet' ) {
+        return;
+    }
 
-	// 1) Assigner la vague courante si aucune vague n'est définie
-	$current_wave_id = function_exists( 'mshps_aap_get_current_wave_id' ) ? (int) mshps_aap_get_current_wave_id() : 0;
-	if ( $current_wave_id ) {
-		$existing = wp_get_post_terms( $post_id, 'projet_vague', [ 'fields' => 'ids' ] );
-		if ( empty( $existing ) && ! is_wp_error( $existing ) ) {
-			wp_set_post_terms( $post_id, [ $current_wave_id ], 'projet_vague', false );
-		}
-	}
+    // 2. Vérifier si une référence existe déjà (On ne touche pas à un projet déjà matriculé)
+    $ref_field_key = 'field_69270cf873e73'; 
+    // On checke le champ ACF ou le meta natif
+    $existing = get_post_meta( $post_id, 'proj_ref', true );
+    
+    if ( ! empty( $existing ) ) {
+        return; 
+    }
 
-	// 2) Générer la référence si vide
-	$ref_field_key = 'field_69270cf873e73'; // ACF key de proj_ref (déjà utilisée ailleurs)
-	$existing_ref  = function_exists( 'get_field' ) ? (string) get_field( $ref_field_key, $post_id ) : (string) get_post_meta( $post_id, 'proj_ref', true );
-	$existing_ref  = trim( $existing_ref );
+    // 3. Appel du Calculateur (Ta fonction pure)
+    if ( function_exists( 'mshps_aap_generate_reference' ) ) {
+        
+        // C'est ici que ça se joue : on récupère le string "26-1-SE-01"
+        $new_ref = mshps_aap_generate_reference( $post_id );
 
-	if ( $existing_ref === '' && function_exists( 'mshps_aap_generate_reference' ) ) {
-		$ref = trim( (string) mshps_aap_generate_reference( $post_id ) );
-		if ( $ref !== '' ) {
-			if ( function_exists( 'update_field' ) ) {
-				update_field( $ref_field_key, $ref, $post_id );
-			} else {
-				update_post_meta( $post_id, 'proj_ref', $ref );
-			}
+        // Si ta fonction pure a bien marché (elle renvoie une chaine non vide)
+        if ( ! empty( $new_ref ) ) {
 
-			// 3) Slug basé sur la référence (stable, court)
-			$slug = sanitize_title( $ref );
-			$slug = wp_unique_post_slug( $slug, $post_id, get_post_status( $post_id ), 'projet', 0 );
+            // A. SAUVEGARDE DE LA RÉFÉRENCE (ACF + Natif)
+            if ( function_exists( 'update_field' ) ) {
+                update_field( $ref_field_key, $new_ref, $post_id );
+            } else {
+                update_post_meta( $post_id, 'proj_ref', $new_ref );
+            }
 
-			// Éviter des updates inutiles
-			$current_slug = (string) get_post_field( 'post_name', $post_id );
-			if ( $slug !== '' && $slug !== $current_slug ) {
-				wp_update_post( [
-					'ID'        => $post_id,
-					'post_name' => $slug,
-				] );
-			}
-		}
-	}
+            // B. MISE À JOUR DU SLUG (URL)
+            $slug_base = sanitize_title( $new_ref );
+            
+            // Unicité du slug
+            $unique_slug = wp_unique_post_slug( $slug_base, $post_id, get_post_status( $post_id ), 'projet', 0 );
+            $current_slug = get_post_field( 'post_name', $post_id );
+
+            // On update seulement si nécessaire
+            if ( $unique_slug && $unique_slug !== $current_slug ) {
+                wp_update_post( [
+                    'ID'        => $post_id,
+                    'post_name' => $unique_slug,
+                ] );
+            }
+            
+            // Log de succès (facultatif)
+            error_log("Projet $post_id matriculé avec succès : $new_ref");
+        } else {
+            // Si c'est vide, c'est que la fonction pure n'a pas trouvé les taxonomies
+            error_log("Echec génération ref pour projet $post_id : Taxonomies manquantes ?");
+        }
+    }
+}
+
+
+/**
+ * Helper pour WS Form : Convertit un slug de taxonomie en ID
+ * Utilisé pour pré-remplir les champs radio/select via l'URL
+ */
+if ( ! function_exists( 'get_term_id_by_slug_wsform' ) ) {
+    function get_term_id_by_slug_wsform( $slug, $taxonomy ) {
+        // Sécurité : si le slug ou la taxonomie sont vides, on ne fait rien
+        if ( empty( $slug ) || empty( $taxonomy ) ) {
+            return '';
+        }
+
+        // On cherche le terme correspondant
+        $term = get_term_by( 'slug', $slug, $taxonomy );
+
+        // Si le terme existe, on renvoie son ID (integer), sinon une chaine vide
+        return $term ? $term->term_id : '';
+    }
 }

@@ -27,7 +27,7 @@ $valid_types = ['se', 'ws', 'ma', 'em'];
             
             // CAS A : Affichage du Formulaire
             // On appelle le fichier template 'form-wizard.php'
-            get_template_part('template-parts/projects/form-wizard', null, ['ptype' => $ptype]);
+            get_template_part('template-parts/projets/form-wizard', null, ['ptype' => $ptype]);
             
         } else {
             
@@ -41,7 +41,7 @@ $valid_types = ['se', 'ws', 'ma', 'em'];
             ] );
             ?>
 
-            <?php get_template_part('template-parts/projects/selection-grid'); ?>
+            <?php get_template_part('template-parts/projets/selection-grid'); ?>
             
             <?php
         }

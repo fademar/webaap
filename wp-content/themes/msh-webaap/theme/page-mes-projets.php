@@ -65,10 +65,10 @@ $submitted_projects = new WP_Query($args);
                         ?>
                         <tr class="hover:bg-gray-50">
                             <td class="px-6 py-4">
-                                <div class="font-medium text-gray-900"><?php the_title(); ?></div>
+                                <div class="font-medium text-sm text-gray-900"><?php the_title(); ?></div>
                             </td>
-                            <td class="px-6 py-4 text-sm text-gray-500"><?php echo esc_html($type_name); ?></td>
-                            <td class="px-6 py-4 text-sm text-gray-500"><?php echo esc_html(($ref) ? $ref : '—'); ?></td>
+                            <td class="px-6 py-4 text-xs text-gray-500"><?php echo esc_html($type_name); ?></td>
+                            <td class="px-6 py-4 text-xs text-gray-500"><?php echo esc_html(($ref) ? $ref : '—'); ?></td>
                             <td class="px-6 py-4">
                                 <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
                                     <?php echo esc_html($status_label); ?>

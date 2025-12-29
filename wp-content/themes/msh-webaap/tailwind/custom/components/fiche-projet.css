@@ -1,0 +1,19 @@
+.msh-label {
+    @apply text-sm font-bold text-slate-600 uppercase mb-2;
+}
+
+.msh-value {
+    @apply text-sm font-medium text-slate-900;
+}
+
+.msh-value-list {
+    @apply flex flex-wrap gap-2;
+}
+
+.msh-value-list-item {
+    @apply border border-slate-900 rounded-full px-2 py-1 text-slate-900 text-sm;
+}
+
+.msh-value-pill {
+    @apply border border-slate-900 rounded-full px-2 py-1 text-slate-900 text-sm;
+}

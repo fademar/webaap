@@ -112,230 +112,109 @@ while ( have_posts() ) : the_post();
 <?php get_header( 'app' ); ?>
 
 <div class="min-h-screen bg-slate-50">
-
-  <!-- Page "document" -->
-  <main class="mx-auto max-w-[1400px] px-6 py-8">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-      <!-- Colonne principale -->
-      <article class="lg:col-span-10">
-        <div class="bg-white border rounded-2xl p-6 sm:p-8">
-          <!-- Header document -->
-          <div class="flex flex-wrap items-center gap-2 mb-4">
-            <span class="text-xs text-slate-500">• Déposé le 12/12/2025</span>
+  
+  <main class="mx-auto max-w-screen-xl px-4 lg:px-8 py-8">
+    
+    <div class="flex flex-col lg:flex-row gap-8 items-start">
+      
+      <article class="flex-1 min-w-0 w-full">
+        
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100">
+             <div>
+                <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 leading-tight">
+                    Algorithmes de la Mémoire
+                </h1>
+                <p class="mt-2 text-sm text-slate-500">
+                    Référence : <span class="font-mono text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded">26-1-EM-01</span>
+                </p>
+             </div>
+             <span class="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700 ring-1 ring-inset ring-blue-700/10">
+                En instruction
+             </span>
           </div>
 
-          <h1 class="text-3xl font-bold text-slate-900 leading-tight">
-            Algorithmes de la Mémoire : Cartographie sensible des quartiers populaires via l’IA
-          </h1>
-
-          <p class="mt-2 text-slate-600">
-            Acronyme : <span class="font-semibold text-slate-900">ALGO-MEMO</span>
-          </p>
-
-          <!-- Propriétés (Notion-like) -->
-          <section class="mt-6">
-            <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">
-              Propriétés
-            </h2>
-
-            <div class="rounded-xl border bg-slate-50 p-4">
-              <dl class="divide-y divide-slate-200 text-sm">
-              <div class="py-2 grid grid-cols-12 gap-3">
-                  <dt class="col-span-5 sm:col-span-4 text-slate-500">Référence</dt>
-                  <dd class="col-span-7 sm:col-span-8 font-medium text-slate-900">26-1-EM-01</dd>
-                </div>
-                <div class="py-2 grid grid-cols-12 gap-3">
-                  <dt class="col-span-5 sm:col-span-4 text-slate-500">Vague</dt>
-                  <dd class="col-span-7 sm:col-span-8 font-medium text-slate-900">26-1</dd>
-                </div>
-                <div class="py-2 grid grid-cols-12 gap-3">
-                  <dt class="col-span-5 sm:col-span-4 text-slate-500">Type de projet</dt>
-                  <dd class="col-span-7 sm:col-span-8 font-medium text-slate-900">Émergence</dd>
-                </div>
-                <div class="py-2 grid grid-cols-12 gap-3">
-                  <dt class="col-span-5 sm:col-span-4 text-slate-500">État</dt>
-                  <dd class="col-span-7 sm:col-span-8">
-                    <span class="inline-flex items-center rounded-full bg-slate-200 px-2.5 py-1 text-xs font-semibold text-slate-800">
-                      En instruction
-                    </span>
-                  </dd>
-                </div>
-                <div class="py-2 grid grid-cols-12 gap-3">
-                  <dt class="col-span-5 sm:col-span-4 text-slate-500">Services sollicités</dt>
-                  <dd class="col-span-7 sm:col-span-8 text-slate-700 italic">Aucun</dd>
-                </div>
-              </dl>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+                <div class="text-xs font-semibold text-slate-500 uppercase mb-1">Porteur</div>
+                <div class="font-medium text-slate-900">Dr. Sarah Connor</div>
+                <div class="text-sm text-slate-500">Laboratoire LISN</div>
             </div>
-          </section>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+                <div class="text-xs font-semibold text-slate-500 uppercase mb-1">Vague</div>
+                <div class="font-medium text-slate-900">Appel 2026 - Session 1</div>
+                <div class="text-sm text-slate-500">Type : Émergence</div>
+            </div>
+          </div>
 
-          <!-- Contenu (blocs type Notion) -->
-          <section class="mt-8 space-y-8">
-            <div>
-              <h3 class="text-sm font-bold text-slate-900 mb-2">Résumé court</h3>
-              <div class="rounded-xl border bg-white p-4 text-sm text-slate-700">
-                <p>
-                  (Texte du résumé court ici. Dans l’interface finale, tu peux faire un bloc repliable.)
-                </p>
+          <div class="space-y-8">
+            <section>
+              <h3 class="flex items-center gap-2 text-sm font-bold text-slate-900 mb-3 uppercase tracking-wide">
+                <i class="fa-regular fa-file-lines text-slate-400"></i> Résumé court
+              </h3>
+              <div class="prose prose-slate prose-sm max-w-none text-slate-600">
+                <p>Ce projet vise à cartographier les mémoires urbaines des quartiers populaires en utilisant des techniques d'intelligence artificielle participative. Il s'agit de confronter les données massives aux récits individuels pour créer une nouvelle forme d'archive vivante.</p>
               </div>
-            </div>
+            </section>
 
-            <div>
-              <h3 class="text-sm font-bold text-slate-900 mb-2">Argumentaire scientifique</h3>
-              <div class="rounded-xl border bg-white p-4 text-sm text-slate-700">
-                <p class="mb-3">
-                  (Bloc de texte long, avec possibilité d’insérer des images si besoin.)
-                </p>
-                <p>
-                  (Deuxième paragraphe…)
-                </p>
+            <section>
+              <h3 class="flex items-center gap-2 text-sm font-bold text-slate-900 mb-3 uppercase tracking-wide">
+                <i class="fa-solid fa-flask text-slate-400"></i> Argumentaire scientifique
+              </h3>
+              <div class="prose prose-slate prose-sm max-w-none text-slate-600 bg-white">
+                <p>L'approche méthodologique repose sur trois piliers : la collecte de données, l'analyse sémantique et la restitution cartographique. Nous utiliserons des modèles de NLP pour traiter les corpus d'entretiens...</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p>
+                <p>Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
               </div>
-            </div>
-
-            <div>
-              <h3 class="text-sm font-bold text-slate-900 mb-2">Pièces jointes</h3>
-              <div class="rounded-xl border bg-white p-4">
-                <ul class="space-y-2 text-sm">
-                  <li class="flex items-center justify-between">
-                    <div class="flex items-center gap-2 text-slate-700">
-                      <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100">📎</span>
-                      <span class="font-medium">Budget_previsionnel.pdf</span>
-                    </div>
-                    <a href="#" class="text-slate-600 hover:text-slate-900">Télécharger</a>
-                  </li>
-                  <li class="flex items-center justify-between">
-                    <div class="flex items-center gap-2 text-slate-700">
-                      <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100">📎</span>
-                      <span class="font-medium">Annexe_methodo.docx</span>
-                    </div>
-                    <a href="#" class="text-slate-600 hover:text-slate-900">Télécharger</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <div>
-              <h3 class="text-sm font-bold text-slate-900 mb-2">Historique</h3>
-              <div class="rounded-xl border bg-white p-4 text-sm text-slate-700">
-                <ul class="space-y-3">
-                  <li class="flex gap-3">
-                    <span class="text-slate-400">12/12/2025</span>
-                    <span>Soumission déposée par le porteur.</span>
-                  </li>
-                  <li class="flex gap-3">
-                    <span class="text-slate-400">13/12/2025</span>
-                    <span>Passage au statut “En instruction”.</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </section>
+            </section>
+          </div>
         </div>
       </article>
 
-      <!-- Sidebar (Notion-like : actions + navigation) -->
-      <aside class="sticky top-0 lg:col-span-2 space-y-6">
-        <section class="bg-white border rounded-2xl p-6">
-          <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">
-            Navigation
-          </h2>
-          <div class="space-y-2 text-sm">
-            <a href="#" class="block rounded-lg px-3 py-2 hover:bg-slate-50 text-slate-700 font-medium">
-              Projet
-            </a>
-            <a href="#" class="block rounded-lg px-3 py-2 hover:bg-slate-50 text-slate-700 font-medium">
-              Gestion
-            </a>
-            <a href="#" class="block rounded-lg px-3 py-2 hover:bg-slate-50 text-slate-700 font-medium">
-              Évaluation
-            </a>
-            <a href="#" class="block rounded-lg px-3 py-2 hover:bg-slate-50 text-slate-700 font-medium">
-              Budget
-            </a>
-            <a href="#" class="block rounded-lg px-3 py-2 hover:bg-slate-50 text-slate-700 font-medium">
-              Communication
-            </a>
-            <a href="#" class="block rounded-lg px-3 py-2 hover:bg-slate-50 text-slate-700 font-medium">
-              Édition
-            </a>
-            <a href="#" class="block rounded-lg px-3 py-2 hover:bg-slate-50 text-slate-700 font-medium">
-              Plateformes
-            </a>
+      <aside class="w-full lg:w-80 shrink-0 space-y-6 lg:sticky lg:top-24">
+        
+        <nav class="bg-white border border-slate-200 rounded-2xl p-2 shadow-sm">
+          <div class="px-4 py-3 border-b border-slate-100 mb-2">
+            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Navigation</h2>
           </div>
-        </section>
+          <div class="space-y-1">
+            <?php 
+            $nav_items = [
+                ['label' => 'Vue d\'ensemble', 'icon' => 'fa-chart-pie', 'active' => true],
+                ['label' => 'Gestion', 'icon' => 'fa-sliders', 'active' => false],
+                ['label' => 'Budget', 'icon' => 'fa-euro-sign', 'active' => false],
+                ['label' => 'Évaluation', 'icon' => 'fa-star', 'active' => false],
+                ['label' => 'Communication', 'icon' => 'fa-bullhorn', 'active' => false],
+            ];
+            foreach($nav_items as $item): 
+                $active_class = $item['active'] ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900';
+            ?>
+            <a href="#" class="<?php echo $active_class; ?> group flex items-center px-3 py-2.5 text-sm font-medium rounded-xl transition-all">
+              <i class="fa-solid <?php echo $item['icon']; ?> w-6 text-center <?php echo $item['active']?'text-white':'text-slate-400 group-hover:text-slate-500'; ?> text-sm"></i>
+              <?php echo $item['label']; ?>
+            </a>
+            <?php endforeach; ?>
+          </div>
+        </nav>
 
-        <section class="bg-white border rounded-2xl p-6">
-          <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">
-            Actions rapides
-          </h2>
-          <div class="flex flex-col gap-2">
-            <button class="rounded-lg border px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
-              Changer le statut
-            </button>
-            <button class="rounded-lg border px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
-              Exporter PDF
-            </button>
-            <button class="rounded-lg border px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
-              Contacter le porteur
-            </button>
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+          <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Contact</h2>
+          <div class="flex items-center gap-3 mb-4">
+             <div class="h-10 w-10 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-500">SC</div>
+             <div class="leading-tight">
+                <div class="font-bold text-slate-900 text-sm">Sarah Connor</div>
+                <div class="text-xs text-slate-500">s.connor@lisn.fr</div>
+             </div>
           </div>
-        </section>
+          <button class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
+            Envoyer un message
+          </button>
+        </div>
+
       </aside>
+
     </div>
   </main>
 </div>
-
-
-<div id="status-modal" class="fixed inset-0 z-50 hidden">
-  <div class="absolute inset-0 bg-black/30"></div>
-
-  <div class="relative mx-auto mt-24 w-full max-w-lg">
-    <div class="rounded-2xl bg-white shadow-xl border p-6">
-      <div class="flex items-start justify-between gap-4">
-        <div>
-          <h3 class="text-lg font-bold text-slate-900">Changer le statut</h3>
-          <p class="text-sm text-slate-600 mt-1">
-            Statut actuel : <span class="inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold">En instruction</span>
-          </p>
-        </div>
-        <button data-close-status-modal class="rounded-lg p-2 hover:bg-slate-100" aria-label="Fermer">✕</button>
-      </div>
-
-      <div class="mt-5 space-y-4">
-        <div>
-          <label class="block text-sm font-semibold text-slate-900 mb-1">Nouveau statut</label>
-          <select class="w-full rounded-lg border px-3 py-2 text-sm">
-            <option>En instruction</option>
-            <option>En évaluation</option>
-            <option>Labellisé</option>
-            <option>Non retenu</option>
-            <option>En exécution</option>
-            <option>Clôturé</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-sm font-semibold text-slate-900 mb-1">Note interne (optionnel)</label>
-          <textarea class="w-full rounded-lg border px-3 py-2 text-sm" rows="3"
-            placeholder="Contexte, décision, référence au comité, etc."></textarea>
-        </div>
-
-        <label class="flex items-center gap-2 text-sm text-slate-700">
-          <input type="checkbox" class="rounded border" />
-          Notifier le porteur par email
-        </label>
-      </div>
-
-      <div class="mt-6 flex justify-end gap-2">
-        <button data-close-status-modal class="rounded-lg border px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
-          Annuler
-        </button>
-        <button class="rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800">
-          Confirmer le changement
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
 
 <?php endwhile; get_footer( 'app' ); ?>
