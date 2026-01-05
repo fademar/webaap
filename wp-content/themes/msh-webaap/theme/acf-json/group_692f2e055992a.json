@@ -572,7 +572,22 @@
             "type": "wysiwyg",
             "instructions": "Comment comptez-vous atteindre ces objectifs ? (Données, terrain, analyses, archives...)",
             "required": 1,
-            "conditional_logic": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_69272ad091972",
+                        "operator": "==",
+                        "value": "55"
+                    }
+                ],
+                [
+                    {
+                        "field": "field_69272ad091972",
+                        "operator": "==",
+                        "value": "56"
+                    }
+                ]
+            ],
             "wrapper": {
                 "width": "",
                 "class": "",
@@ -593,7 +608,22 @@
             "type": "wysiwyg",
             "instructions": "Comment ce projet se positionne-t-il par rapport à la littérature existante ?",
             "required": 1,
-            "conditional_logic": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_69272ad091972",
+                        "operator": "==",
+                        "value": "55"
+                    }
+                ],
+                [
+                    {
+                        "field": "field_69272ad091972",
+                        "operator": "==",
+                        "value": "56"
+                    }
+                ]
+            ],
             "wrapper": {
                 "width": "",
                 "class": "",
@@ -603,6 +633,42 @@
             "allow_in_bindings": 0,
             "tabs": "all",
             "toolbar": "basic",
+            "media_upload": 1,
+            "delay": 0
+        },
+        {
+            "key": "field_695bc669a2268",
+            "label": "Public visé",
+            "name": "proj_public_vise",
+            "aria-label": "",
+            "type": "wysiwyg",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_69272ad091972",
+                        "operator": "==",
+                        "value": "58"
+                    }
+                ],
+                [
+                    {
+                        "field": "field_69272ad091972",
+                        "operator": "==",
+                        "value": "57"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "allow_in_bindings": 0,
+            "tabs": "all",
+            "toolbar": "full",
             "media_upload": 1,
             "delay": 0
         },
@@ -1397,5 +1463,5 @@
     "description": "",
     "show_in_rest": 0,
     "display_title": "",
-    "modified": 1766154851
+    "modified": 1767622369
 }
