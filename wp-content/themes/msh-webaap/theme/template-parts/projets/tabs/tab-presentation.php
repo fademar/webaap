@@ -113,7 +113,7 @@ if ((int) get_field('cand_plateformes') === 1) {
         </div>
         <div class="flex flex-col">
             <span class="text-slate-900 text-xs uppercase">État</span>
-            <span class="inline-flex items-center rounded-full bg-slate-200 px-2.5 py-1 text-xs font-semibold text-slate-800">
+            <span class="font-medium text-slate-900">
                 <?php echo $status_label; ?>
             </span>
         </div>
@@ -233,101 +233,63 @@ if ((int) get_field('cand_plateformes') === 1) {
         </div>
     </div>
 
+
+
     <!-- argumentaire scientifique -->
-    <div>
-        <h3 class="text-sm font-bold text-slate-600 uppercase mb-2">Objectifs et hypothèses de recherche</h3>
-        <?php
-        $content = get_field('proj_objectifs');
+    <?php
+        // 1. Récupération du type de projet (Taxonomie)
+        $terms = get_the_terms( get_the_ID(), 'projet_type' );
+        $ptype = ( $terms && ! is_wp_error( $terms ) ) ? reset( $terms )->slug : '';
 
-        if ($content) {
-        // 1) Filtrage "safe" des balises autorisées (images incluses)
-        $content = wp_kses_post($content);
+        // 2. Configuration des sections : [ 'Nom du champ ACF' => 'Titre à afficher' ]
+        // On commence par les champs communs à tous les projets
+        $sections = [
+            'proj_objectifs' => 'Objectifs et hypothèses de recherche',
+        ];
 
-        // 2) Applique les filtres WP (paragraphes, shortcodes, embeds, etc.)
-        $content = apply_filters('the_content', $content);
+        // 3. Logique conditionnelle selon le type
+        if ( in_array( $ptype, ['em', 'ma'], true ) ) {
+            // Projets Émergence / Maturation
+            $sections['proj_methodologie'] = 'Méthodologie';
+            $sections['proj_etat_art']     = "État de l'art";
 
-        // 3) Affichage dans un conteneur Tailwind typographié
-        echo '<div class="prose prose-slate">';
-        echo $content;
-        echo '</div>';
+        } elseif ( in_array( $ptype, ['ws', 'se'], true ) ) {
+            // Projets Workshop / Séminaire
+            // "Public visé" remplace la méthodo. 
+            // (Vérifie bien que le nom de ton champ ACF est 'proj_public' ou ajuste-le ici)
+            $sections['proj_public_vise'] = 'Public visé'; 
         }
-        ?>
-    </div>
-    <div>
-        <h3 class="text-sm font-bold text-slate-600 uppercase mb-2">Méthodologie</h3>
-        <?php
-        $content = get_field('proj_methodologie');
 
-        if ($content) {
-        // 1) Filtrage "safe" des balises autorisées (images incluses)
-        $content = wp_kses_post($content);
+        // On ajoute les autres champs communs à la fin
+        $sections['proj_interdisciplinarite'] = 'Dimension interdisciplinaire';
+        $sections['proj_partenariat']         = 'Partenariat inter-institutionnel';
 
-        // 2) Applique les filtres WP (paragraphes, shortcodes, embeds, etc.)
-        $content = apply_filters('the_content', $content);
 
-        // 3) Affichage dans un conteneur Tailwind typographié
-        echo '<div class=prose prose-slate">';
-        echo $content;
-        echo '</div>';
-        }
-        ?>
-    </div>
-    <div>
-        <h3 class="text-sm font-bold text-slate-600 uppercase mb-2">État de l'art</h3>
-        <?php
-        $content = get_field('proj_etat_art');
+        // 4. Boucle d'affichage unique
+        foreach ( $sections as $field_name => $label ) : 
+            
+            $content = get_field( $field_name );
 
-        if ($content) {
-        // 1) Filtrage "safe" des balises autorisées (images incluses)
-        $content = wp_kses_post($content);
+            // Si le champ est vide, on passe au suivant sans rien afficher
+            if ( ! $content ) continue; 
+            ?>
 
-        // 2) Applique les filtres WP (paragraphes, shortcodes, embeds, etc.)
-        $content = apply_filters('the_content', $content);
+            <div class="mb-8"> 
+                <h3 class="text-sm font-bold text-slate-600 uppercase mb-2">
+                    <?php echo esc_html( $label ); ?>
+                </h3>
+                
+                <div class="prose prose-slate max-w-none">
+                    <?php 
+                    // Sécurisation et formatage
+                    $content = wp_kses_post( $content );
+                    echo apply_filters( 'the_content', $content ); 
+                    ?>
+                </div>
+            </div>
 
-        // 3) Affichage dans un conteneur Tailwind typographié
-        echo '<div class="prose prose-slate">';
-        echo $content;
-        echo '</div>';
-        }
-        ?>
-    </div>
-    <div>
-        <h3 class="text-sm font-bold text-slate-600 uppercase mb-2">Dimension interdisciplinaire</h3>
-        <?php
-        $content = get_field('proj_interdisciplinarite');
-
-        if ($content) {
-        // 1) Filtrage "safe" des balises autorisées (images incluses)
-        $content = wp_kses_post($content);
-
-        // 2) Applique les filtres WP (paragraphes, shortcodes, embeds, etc.)
-        $content = apply_filters('the_content', $content);
-
-        // 3) Affichage dans un conteneur Tailwind typographié
-        echo '<div class="prose prose-slate">';
-        echo $content;
-        echo '</div>';
-        }
-        ?>
-    </div>
-    <div>
-        <h3 class="text-sm font-bold text-slate-600 uppercase mb-2">Partenariat inter-institutionnel</h3>
-        <?php
-        $content = get_field('proj_partenariat');
-
-        if ($content) {
-        // 1) Filtrage "safe" des balises autorisées (images incluses)
-        $content = wp_kses_post($content);
-
-        // 2) Applique les filtres WP (paragraphes, shortcodes, embeds, etc.)
-        $content = apply_filters('the_content', $content);
-
-        // 3) Affichage dans un conteneur Tailwind typographié
-        echo '<div class="prose prose-slate">';
-        echo $content;
-        echo '</div>';
-        }
-        ?>
-    </div>
+        <?php endforeach; ?>
     
 </section>
+
+<?php msh_render_notes_module( get_the_ID(), 'presentation' ); ?>

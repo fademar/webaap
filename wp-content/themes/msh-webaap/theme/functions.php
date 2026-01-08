@@ -243,3 +243,5 @@ add_filter( 'gettext', function( $translated_text, $text, $domain ) {
     return $translated_text;
 }, 20, 3 );
 
+// Dans functions.php ou ton plugin
+wp_enqueue_style( 'fontawesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css', [], '6.5.1' );

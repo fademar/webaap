@@ -45,24 +45,45 @@ function mshps_aap_add_roles() {
 
 /**
  * Bloque l’accès au wp-admin pour tous sauf les vrais admins.
- * Redirige vers une page front (ex: /dashboard-msh/).
+ * Redirige vers une page front (ex: /dashboard/).
  */
 add_action('admin_init', function () {
+    
+    // On récupère le nom du fichier en cours d'exécution (ex: index.php, admin-post.php)
+    global $pagenow;
 
-    // Si l’utilisateur peut gérer les options (administrator), on le laisse tranquille
+    // -----------------------------------------------------------
+    // 1. EXCEPTIONS (Ceux qui ont le droit d'entrer dans /wp-admin/)
+    // -----------------------------------------------------------
+
+    // A. L'administrateur suprême
     if ( current_user_can('manage_options') ) {
         return;
     }
 
-    // On autorise les appels AJAX admin-ajax.php
-    if ( defined('DOING_AJAX') && DOING_AJAX ) {
+    // B. Les processus techniques (AJAX et Sauvegardes de formulaire)
+    if ( ( defined('DOING_AJAX') && DOING_AJAX ) || $pagenow === 'admin-post.php' ) {
         return;
     }
 
-    // Tout le reste (candidat, msh_member, autres non-admin) → redirection front
-    wp_redirect( home_url('/dashboard-msh/') );
+    // -----------------------------------------------------------
+    // 2. REDIRECTIONS (Pour ceux qui n'ont rien à faire là)
+    // -----------------------------------------------------------
+    
+    $user = wp_get_current_user();
+    $roles = (array) $user->roles;
+
+    // Cas MSH MEMBER -> Dashboard
+    if ( in_array( 'msh_member', $roles ) ) {
+        wp_redirect( home_url('/dashboard/') );
+        exit;
+    }
+
+    // Cas CANDIDAT (et tous les autres par défaut) -> Mes Projets
+    wp_redirect( home_url('/mes-projets/') );
     exit;
 });
+
 
 add_filter('show_admin_bar', function ($show) {
     if ( current_user_can('manage_options') ) {

@@ -281,27 +281,6 @@ function mshps_aap_update_project_status(): void {
 		'post_status' => $new_status,
 	] );
 
-	// Génération automatique de la référence si passage en instruction et ref vide.
-	if ( $new_status === 'projet-instruction' ) {
-		// proj_ref est un champ ACF (field key). On privilégie ACF pour garder la méta "_proj_ref" cohérente.
-		$ref_field_key = 'field_69270cf873e73';
-		if ( function_exists( 'get_field' ) ) {
-			$existing_ref = (string) get_field( $ref_field_key, $project_id );
-		} else {
-			$existing_ref = (string) get_post_meta( $project_id, 'proj_ref', true );
-		}
-		if ( $existing_ref === '' && function_exists( 'mshps_aap_generate_reference' ) ) {
-			$ref = mshps_aap_generate_reference( $project_id );
-			if ( $ref ) {
-				if ( function_exists( 'update_field' ) ) {
-					update_field( $ref_field_key, $ref, $project_id );
-				} else {
-					update_post_meta( $project_id, 'proj_ref', $ref );
-				}
-			}
-		}
-	}
-
 	mshps_aap_redirect_back();
 }
 
@@ -330,28 +309,34 @@ function mshps_aap_generate_project_ref(): void {
 }
 
 function mshps_aap_update_project_budget(): void {
-	mshps_aap_require_msh_access();
-	check_admin_referer( 'mshps_update_project_budget' );
+    // 1. Vérification des droits
+    mshps_aap_require_msh_access();
 
-	$project_id = isset( $_POST['project_id'] ) ? (int) $_POST['project_id'] : 0;
-	if ( ! $project_id || get_post_type( $project_id ) !== 'projet' ) {
-		wp_die( 'Projet invalide.', 400 );
-	}
+    // 2. Vérification du Nonce (Sécurité)
+    // Param 1: L'action définie dans wp_nonce_field
+    // Param 2: Le nom de l'input défini dans wp_nonce_field ('msh_budget_nonce')
+    check_admin_referer( 'msh_save_budget_action', 'msh_budget_nonce' );
 
-	$amount_raw = isset( $_POST['budget_accorde'] ) ? (string) wp_unslash( $_POST['budget_accorde'] ) : '';
-	$amount_raw = str_replace( ',', '.', trim( $amount_raw ) );
-	$amount     = $amount_raw === '' ? '' : (string) (float) $amount_raw;
+    // 3. Récupération de l'ID
+    $project_id = isset( $_POST['project_id'] ) ? (int) $_POST['project_id'] : 0;
+    if ( ! $project_id || get_post_type( $project_id ) !== 'projet' ) {
+        wp_die( 'Projet invalide.', 'Erreur', array( 'response' => 400 ) );
+    }
 
-	// Budget accordé = champ ACF suiv_budget (field key)
-	$budget_field_key = 'field_6940114908e06';
-	if ( function_exists( 'update_field' ) ) {
-		update_field( $budget_field_key, $amount, $project_id );
-	} else {
-		// Fallback si ACF non chargé
-		update_post_meta( $project_id, 'suiv_budget', $amount );
-	}
+    // 4. Récupération du montant
+    $amount_raw = isset( $_POST['suiv_budget'] ) ? (string) wp_unslash( $_POST['suiv_budget'] ) : '';
+    
+    // Nettoyage (remplace virgule par point, enlève les espaces)
+    $amount_raw = str_replace( ',', '.', trim( $amount_raw ) );
+    $amount     = $amount_raw === '' ? '' : (string) (float) $amount_raw;
 
-	mshps_aap_redirect_back();
+    // 5. Sauvegarde
+    $budget_field_key = 'field_6940114908e06';
+    update_field( $budget_field_key, $amount, $project_id );
+    
+
+    // 6. Redirection
+    mshps_aap_redirect_back();
 }
 
 /**
@@ -983,4 +968,465 @@ if ( ! function_exists( 'get_term_id_by_slug_wsform' ) ) {
         // Si le terme existe, on renvoie son ID (integer), sinon une chaine vide
         return $term ? $term->term_id : '';
     }
+}
+
+/**
+ * Version imprimable du dossier de projet
+ */
+add_action( 'admin_post_mshps_print_dossier', 'mshps_render_printable_dossier' );
+
+function mshps_render_printable_dossier() {
+    // 1. SÉCURITÉ
+    if ( ! is_user_logged_in() ) wp_die('Accès interdit');
+    $project_id = isset($_GET['project_id']) ? (int) $_GET['project_id'] : 0;
+    if ( ! $project_id ) wp_die('Projet introuvable');
+
+    $project = get_post($project_id);
+    
+    $logo_url = site_url('/wp-content/uploads/2026/01/logo-MSH2025.png');
+
+    $current_user = wp_get_current_user();
+    // --- RÉCUPÉRATION DES DONNÉES (Basé sur votre code) ---
+    
+    // A. Taxonomies
+    $vague_terms = get_the_terms( $project_id, 'projet_vague' );
+    $vague_name  = ( $vague_terms && ! is_wp_error( $vague_terms ) ) ? reset( $vague_terms )->name : 'N/A';
+    
+    $type_terms  = get_the_terms( $project_id, 'projet_type' );
+    $ptype_obj   = ( $type_terms && ! is_wp_error( $type_terms ) ) ? reset( $type_terms ) : null;
+    $ptype_name  = $ptype_obj ? $ptype_obj->name : 'N/A';
+    $ptype_slug  = $ptype_obj ? $ptype_obj->slug : '';
+
+    $disciplines = get_the_terms( $project_id, 'projet_discipline' ) ?: [];
+    $mots_cles   = get_the_terms( $project_id, 'projet_mot_cle' ) ?: [];
+
+    // B. Statut
+    $status = get_post_status($project_id);
+    $statuses = function_exists('mshps_aap_projet_custom_statuses') ? mshps_aap_projet_custom_statuses() : [];
+    $status_label = $statuses[$status] ?? $status;
+
+    // C. Services sollicités
+    $services = [];
+    $kit_com = get_field('cand_kit_com', $project_id);
+    if (in_array($kit_com, ['cible', 'complet'], true)) $services[] = 'Communication';
+    if ((int) get_field('cand_edition', $project_id) === 1) $services[] = 'Édition';
+    if ((int) get_field('cand_plateformes', $project_id) === 1) $services[] = 'Plateformes';
+
+    // D. Équipe (Fusion Porteur + Co-porteurs)
+    $porteur  = get_field('proj_porteur', $project_id);
+    $porteurs = get_field('proj_porteurs', $project_id);
+    $team_rows = [];
+
+    // Porteur principal
+    if (is_array($porteur) && !empty($porteur)) {
+        $team_rows[] = array_merge($porteur, ['role' => 'Porteur']);
+    }
+    // Co-porteurs
+    if (is_array($porteurs)) {
+        foreach ($porteurs as $p) {
+            if (!is_array($p)) continue;
+            $team_rows[] = array_merge($p, ['role' => 'Membre']);
+        }
+    }
+
+    // E. Configuration des sections scientifiques (Logique conditionnelle)
+    $sections = [ 'proj_objectifs' => 'Objectifs et hypothèses de recherche' ];
+    
+    if ( in_array( $ptype_slug, ['em', 'ma'], true ) ) {
+        $sections['proj_methodologie'] = 'Méthodologie';
+        $sections['proj_etat_art']     = "État de l'art";
+    } elseif ( in_array( $ptype_slug, ['ws', 'se'], true ) ) {
+        $sections['proj_public_vise'] = 'Public visé'; 
+    }
+    $sections['proj_interdisciplinarite'] = 'Dimension interdisciplinaire';
+    $sections['proj_partenariat']         = 'Partenariat inter-institutionnel';
+
+    
+    // --- DÉBUT DU HTML ---
+    ?>
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <title>Dossier_<?php echo $project_id; ?>_<?php echo sanitize_title($project->post_title); ?></title>
+        <style>
+            /* CSS POUR L'IMPRESSION (A4 Zéro Marge + Padding body) */
+            @media print {
+                @page { margin: 0; size: A4; }
+                body { margin: 0; padding: 2cm; width: auto; box-shadow: none; }
+                .no-print, button { display: none !important; }
+                a { text-decoration: none; color: #000; }
+                /* On évite de couper les tableaux au milieu d'une ligne */
+                tr { page-break-inside: avoid; }
+                h2, h3 { page-break-after: avoid; }
+            }
+
+            /* CSS VISUEL (ÉCRAN) */
+            body { 
+                font-family: 'Helvetica', 'Arial', sans-serif; 
+                font-size: 11pt; 
+                line-height: 1.5; 
+                color: #1e293b; /* Slate-800 */
+                max-width: 210mm; 
+                margin: 40px auto; 
+                padding: 40px; 
+                background: #fff; 
+                box-shadow: 0 0 15px rgba(0,0,0,0.1); 
+            }
+
+            /* TYPOGRAPHIE */
+            h1 { font-size: 24px; color: #0f172a; margin-bottom: 5px; text-transform: uppercase; border-bottom: 2px solid #0f172a; padding-bottom: 15px; }
+            h2 { font-size: 16px; color: #334155; margin-top: 30px; border-bottom: 1px solid #cbd5e1; padding-bottom: 5px; text-transform: uppercase; letter-spacing: 0.05em; background: #f8fafc; padding: 8px; }
+            h3 { font-size: 13px; font-weight: bold; color: #475569; text-transform: uppercase; margin-top: 20px; margin-bottom: 10px; }
+            
+            /* COMPOSANTS */
+            /* Header */
+            header { border-bottom: 2px solid #000; padding-bottom: 20px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; }
+            .header-info { text-align: right; font-size: 0.9em; color: #555; }  
+            .logo img { max-height: 60px; }
+            .header-title { font-size: 16px; margin-bottom: 5px; color: #901879; text-transform: uppercase; font-weight: bold; }
+            /* Grille propriétés */
+            .props-grid { display: grid; grid-template-columns: 20% 20% 60%; gap: 15px; margin-bottom: 20px; border: 1px solid #e2e8f0; padding: 15px; border-radius: 6px; }
+            .prop-item label { display: block; font-size: 0.7em; text-transform: uppercase; color: #64748b; font-weight: bold; }
+            .prop-item span { display: block; font-weight: 600; color: #0f172a; }
+
+            /* Tableaux */
+            table { width: 100%; border-collapse: collapse; font-size: 0.9em; margin-top: 10px; }
+            th { text-align: left; background: #f1f5f9; padding: 8px; border: 1px solid #cbd5e1; font-weight: bold; color: #334155; }
+            td { padding: 8px; border: 1px solid #cbd5e1; vertical-align: top; }
+
+            /* Tags */
+            .tag { display: inline-block; background: #f1f5f9; padding: 2px 8px; border-radius: 12px; font-size: 0.8em; margin-right: 5px; border: 1px solid #cbd5e1; }
+            
+            /* Prose */
+            .content-box { text-align: justify; }
+            .content-box p { margin-bottom: 10px; }
+
+            /* Bouton */
+            .print-btn { position: fixed; top: 20px; right: 20px; background: #0f172a; color: #fff; padding: 10px 20px; border-radius: 6px; cursor: pointer; border: none; font-weight: bold; z-index: 999; }
+        </style>
+    </head>
+    <body>
+        <button onclick="window.print()" class="print-btn">🖨️ Enregistrer en PDF</button>
+
+        <header>
+            <div class="logo">
+                <?php if($logo_url): ?>
+                    <img src="<?php echo esc_url($logo_url); ?>" alt="MSH" style="max-height: 60px;">
+                <?php else: ?>
+                    <strong>MSH DASHBOARD</strong>
+                <?php endif; ?>
+            </div>
+            <div class="header-title">
+                Appel à projets - Dossier de candidature
+            </div>
+            <div class="header-info">
+                Généré le : <?php echo date('d/m/Y'); ?><br>
+                Par : <?php echo $current_user->display_name; ?>
+            </div>
+        </header>
+
+        <h1><?php echo esc_html($project->post_title); ?></h1>
+
+        <div class="props-grid">
+            <div class="prop-item">
+                <label>Référence</label>
+                <span><?php echo get_field('proj_ref', $project_id); ?></span>
+            </div>
+            <div class="prop-item">
+                <label>Vague</label>
+                <span><?php echo esc_html($vague_name); ?></span>
+            </div>
+            <div class="prop-item">
+                <label>Type</label>
+                <span><?php echo esc_html($ptype_name); ?></span>
+            </div>
+        </div>
+
+        <?php if (!empty($team_rows)): ?>
+            <h2>Équipe de recherche</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Laboratoire</th>
+                        <th>Établissement</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($team_rows as $r): ?>
+                    <tr>
+                        <td>
+                            <strong><?php echo esc_html(($r['nom'] ?? '') . ' ' . ($r['prenom'] ?? '')); ?></strong><br>
+                        </td>
+                        <td><?php echo esc_html($r['laboratoire'] ?? ''); ?></td>
+                        <td><?php echo esc_html($r['etablissement'] ?? ''); ?></td>
+                        <td><?php echo esc_html($r['email'] ?? ''); ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php endif; ?>
+
+        <?php if (!empty($disciplines) || !empty($mots_cles)): ?>
+            <div style="margin-top: 20px; padding: 15px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;">
+                <?php if(!empty($disciplines)): ?>
+                    <div style="margin-bottom: 10px;">
+                        <strong>Disciplines : </strong>
+                        <?php foreach($disciplines as $d) echo '<span class="tag">'.esc_html($d->name).'</span>'; ?>
+                    </div>
+                <?php endif; ?>
+                
+                <?php if(!empty($mots_cles)): ?>
+                    <div>
+                        <strong>Mots-clés : </strong>
+                        <?php foreach($mots_cles as $m) echo '<span class="tag">'.esc_html($m->name).'</span>'; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
+
+        <h2>Dossier Scientifique</h2>
+
+        <h3>Résumé court</h3>
+        <div class="content-box">
+            <?php echo wpautop(wp_kses_post(get_field('proj_resume_court', $project_id))); ?>
+        </div>
+
+        <?php foreach ( $sections as $field_name => $label ) : 
+            $content = get_field( $field_name, $project_id );
+            if ( ! $content ) continue; 
+            ?>
+            <div style="page-break-inside: avoid;">
+                <h3><?php echo esc_html( $label ); ?></h3>
+                <div class="content-box">
+                    <?php echo wpautop( wp_kses_post( $content ) ); ?>
+                </div>
+            </div>
+        <?php endforeach; ?>
+
+        <h2>Calendrier et Organisation</h2>
+
+        <?php 
+        // Récupération des champs calendrier
+        $date_debut = get_field('cand_date_debut', $project_id);
+        $date_fin   = get_field('cand_date_fin', $project_id);
+        $date_event = get_field('cand_date_event', $project_id);
+        $lieu_event = get_field('cand_lieu_event', $project_id);
+        $seances    = get_field('cand_seances', $project_id);
+
+        // Helper pour formatage date
+        $fmt_date = function($d) {
+            return $d ? date_format(date_create($d), 'd/m/Y') : '-';
+        };
+        ?>
+
+        <?php if ( in_array($ptype_slug, ['em', 'ma'], true) ): ?>
+            <div class="props-grid">
+                <div class="prop-item">
+                    <label>Date de début</label>
+                    <span><?php echo esc_html( $fmt_date($date_debut) ); ?></span>
+                </div>
+                <div class="prop-item">
+                    <label>Date de fin</label>
+                    <span><?php echo esc_html( $date_fin ); ?></span>
+                </div>
+            </div>
+
+        <?php elseif ( $ptype_slug === 'ws' ): ?>
+            <div class="props-grid">
+                <div class="prop-item">
+                    <label>Date de l'événement</label>
+                    <span><?php echo esc_html( $fmt_date($date_event) ); ?></span>
+                </div>
+                <div class="prop-item" style="grid-column: span 2;">
+                    <label>Lieu</label>
+                    <span><?php echo esc_html( $lieu_event ); ?></span>
+                </div>
+            </div>
+
+        <?php elseif ( $ptype_slug === 'se' ): ?>
+            
+            <?php if ( is_array($seances) && !empty($seances) ): ?>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 15%;">Séance</th>
+                            <th style="width: 15%;">Date</th>
+                            <th style="width: 40%;">Titre</th>
+                            <th style="width: 30%;">Lieu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($seances as $i => $s): 
+                            $d = $s['date']  ?? '';
+                            $t = $s['titre'] ?? '';
+                            $l = $s['lieu']  ?? '';
+                        ?>
+                        <tr>
+                            <td style="font-weight:bold;">#<?php echo ($i + 1); ?></td>
+                            <td><?php echo esc_html( $fmt_date($d) ); ?></td>
+                            <td><?php echo esc_html( $t ); ?></td>
+                            <td><?php echo esc_html( $l ); ?></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php else: ?>
+                <p style="font-style: italic; color: #666;">Aucune séance renseignée.</p>
+            <?php endif; ?>
+
+        <?php else: ?>
+            <p style="font-style: italic; color: #666;">Aucune information de calendrier spécifique pour ce type de projet.</p>
+        <?php endif; ?>
+
+        <h2>Budget et Financement</h2>
+
+        <?php 
+        // Récupération des données Budget
+        $budget_detail         = get_field('cand_budget_detail', $project_id);
+        $budget_total          = get_field('cand_budget_total', $project_id);
+        $cofinancements        = get_field('cand_cofinancements', $project_id);
+        $cofinancements_detail = get_field('cand_cofinancements_detail', $project_id);
+        $suiv_budget           = get_field('suiv_budget', $project_id);
+
+        // Helper affichage monétaire
+        $fmt_money = function($amount) {
+            return number_format((float)$amount, 2, ',', ' ') . ' €';
+        };
+        ?>
+
+        <h3>Budget demandé par le porteur</h3>
+        
+        <?php if ( is_array($budget_detail) && !empty($budget_detail) ): ?>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 70%;">Poste de dépense</th>
+                        <th style="width: 30%; text-align: right;">Montant</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($budget_detail as $b): 
+                        $poste = $b['poste'] ?? '';
+                        $montant = $b['montant'] ?? 0;
+                    ?>
+                    <tr>
+                        <td style="text-transform: uppercase; font-size: 0.9em;"><?php echo esc_html($poste); ?></td>
+                        <td style="text-align: right; font-family: monospace; font-size: 1.1em;">
+                            <?php echo esc_html($fmt_money($montant)); ?>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                    
+                    <tr style="background-color: #f1f5f9; font-weight: bold;">
+                        <td style="text-align: right; text-transform: uppercase;">Total Demandé</td>
+                        <td style="text-align: right; font-family: monospace; font-size: 1.1em;">
+                            <?php echo esc_html($fmt_money($budget_total)); ?>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <p style="font-style: italic; color: #666;">Aucun détail budgétaire renseigné.</p>
+        <?php endif; ?>
+
+        <?php if ( $cofinancements && is_array($cofinancements_detail) && !empty($cofinancements_detail) ): ?>
+            <h3>Cofinancements acquis ou demandés</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 70%;">Source</th>
+                        <th style="width: 30%; text-align: right;">Montant</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($cofinancements_detail as $c): 
+                        $source = $c['source'] ?? '';
+                        $montant = $c['montant'] ?? 0;
+                    ?>
+                    <tr>
+                        <td style="text-transform: uppercase; font-size: 0.9em;"><?php echo esc_html($source); ?></td>
+                        <td style="text-align: right; font-family: monospace; font-size: 1.1em;">
+                            <?php echo esc_html($fmt_money($montant)); ?>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php endif; ?>
+
+        <script>
+            // Lancement automatique au chargement
+            window.onload = function() { setTimeout(function(){ window.print(); }, 500); }
+        </script>
+    </body>
+    </html>
+    <?php
+    exit;
+}
+
+/**
+ * Enregistrement d'une évaluation (CPT)
+ */
+add_action( 'admin_post_mshps_add_evaluation', 'mshps_handle_add_evaluation' );
+
+function mshps_handle_add_evaluation() {
+    // 1. Sécurité
+    check_admin_referer( 'mshps_add_eval_action' );
+    if ( ! current_user_can('edit_posts') ) wp_die('Accès interdit');
+
+    $project_id = (int) $_POST['project_id'];
+    $redirect   = $_POST['redirect'];
+    
+    // Config identique à la modale
+    $criteres_keys = ['interinst', 'interdisc', 'novateur', 'objectifs', 'science', 'equipe', 'perspectives', 'budget'];
+
+    // 2. Création du Post Evaluation
+    $nom = sanitize_text_field($_POST['evaluateur_nom']);
+    $prenom = sanitize_text_field($_POST['evaluateur_prenom']);
+    $email = sanitize_email($_POST['evaluateur_email']);
+    $institution = sanitize_text_field($_POST['evaluateur_institution']);
+    $note_generale = sanitize_text_field($_POST['note_generale']);
+    $commentaire_general = sanitize_text_field($_POST['commentaire_general']);
+    
+    // Titre ex: "Éval B - Angela Marques"
+    $title = sprintf('Éval %s - %s %s', $note_globale, $nom, $prenom);
+
+    $eval_id = wp_insert_post([
+        'post_type'    => 'evaluation',
+        'post_title'   => $title,
+        'post_status'  => 'publish',
+    ]);
+
+    if ( $eval_id ) {
+        // 3. Sauvegarde Métas
+        update_field( 'eval_project_id', $project_id, $eval_id );
+        
+        // Infos Evaluateur
+        update_field( 'evaluateur_nom', $nom, $eval_id );
+        update_field( 'evaluateur_prenom', $prenom, $eval_id );
+        update_field( 'evaluateur_email', $email, $eval_id );
+        update_field( 'evaluateur_institution', $institution, $eval_id );
+
+        // Boucle sur les critères
+        foreach ($criteres_keys as $key) {
+            if (isset($_POST["criteres_{$key}_note"])) {
+                update_field( "criteres_{$key}_note", sanitize_text_field($_POST["criteres_{$key}_note"]), $eval_id );
+            }
+            if (isset($_POST["criteres_{$key}_comment"])) {
+                // wp_kses_post autorise le gras/italique si copié depuis word/pdf
+                update_field( "criteres_{$key}_comment", wp_kses_post($_POST["criteres_{$key}_comment"]), $eval_id );
+            }
+        }
+
+        // Synthèse
+        update_field( 'note_generale', $note_generale, $eval_id );
+        update_field( 'commentaire_general', $commentaire_general, $eval_id );
+
+    }
+
+    wp_redirect( $redirect );
+    exit;
 }

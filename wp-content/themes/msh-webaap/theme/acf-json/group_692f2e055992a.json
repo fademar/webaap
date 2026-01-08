@@ -831,6 +831,35 @@
             "allow_in_bindings": 0
         },
         {
+            "key": "field_695bda061597c",
+            "label": "Lieu de l'événement",
+            "name": "cand_lieu_event",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_69272ad091972",
+                        "operator": "==",
+                        "value": "58"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_6927323b86312",
             "label": "Note sur la durée",
             "name": "",
@@ -956,6 +985,28 @@
                     "placeholder": "",
                     "prepend": "",
                     "append": "",
+                    "parent_repeater": "field_692730f194218"
+                },
+                {
+                    "key": "field_695fb4768ea26",
+                    "label": "Résumé court",
+                    "name": "resume_court",
+                    "aria-label": "",
+                    "type": "textarea",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "rows": "",
+                    "placeholder": "",
+                    "new_lines": "",
                     "parent_repeater": "field_692730f194218"
                 }
             ]
@@ -1427,7 +1478,7 @@
             "label": "Budget accordé",
             "name": "suiv_budget",
             "aria-label": "",
-            "type": "text",
+            "type": "number",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
@@ -1437,9 +1488,11 @@
                 "id": ""
             },
             "default_value": "",
-            "maxlength": "",
+            "min": "",
+            "max": "",
             "allow_in_bindings": 0,
             "placeholder": "",
+            "step": "",
             "prepend": "",
             "append": ""
         }
@@ -1463,5 +1516,5 @@
     "description": "",
     "show_in_rest": 0,
     "display_title": "",
-    "modified": 1767622369
+    "modified": 1767879815
 }
