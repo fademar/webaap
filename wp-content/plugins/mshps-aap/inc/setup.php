@@ -247,7 +247,7 @@ add_filter('wsf_redirect_after_login', function($form_object, $submit_object) {
     if (in_array('candidat', $user->roles, true)) {
         return [
             'redirect' => [
-                'url' => home_url('/nouveau-projet/'),
+                'url' => home_url('/mes-projets/'),
             ]
         ];
     }

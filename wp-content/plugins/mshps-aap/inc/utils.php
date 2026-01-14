@@ -623,11 +623,18 @@ function mshps_aap_rest_get_projets( WP_REST_Request $request ) {
  * 
  * @param int $form_id        ID du formulaire WS Form
  * @param int $user_id        ID de l'utilisateur
- * @param int $field_titre_id ID du champ Titre (par défaut 229)
- * @param int $field_type_id  ID du champ Type (par défaut 227)
+ * @param int $field_titre_id ID du champ Titre (utilise MSHPS_WSFORM_FIELD_TITRE si non fourni)
+ * @param int $field_type_id  ID du champ Type (utilise MSHPS_WSFORM_FIELD_TYPE si non fourni)
  * @return array              Tableau d'objets avec les brouillons (valeurs désérialisées)
  */
-function mshps_get_user_drafts( $form_id, $user_id, $field_titre_id = 229, $field_type_id = 227 ) {
+function mshps_get_user_drafts( $form_id, $user_id, $field_titre_id = null, $field_type_id = null ) {
+    // Utiliser les constantes si les IDs ne sont pas fournis
+    if ( $field_titre_id === null ) {
+        $field_titre_id = defined( 'MSHPS_WSFORM_FIELD_TITRE' ) ? MSHPS_WSFORM_FIELD_TITRE : 229;
+    }
+    if ( $field_type_id === null ) {
+        $field_type_id = defined( 'MSHPS_WSFORM_FIELD_TYPE' ) ? MSHPS_WSFORM_FIELD_TYPE : 227;
+    }
     global $wpdb;
 
     $table_submit = $wpdb->prefix . 'wsf_submit';
@@ -762,12 +769,15 @@ add_action('wsf_submit_update', 'mshps_create_keywords_on_draft_save', 10, 1);
 function mshps_create_keywords_on_draft_save($submit) {
     global $wpdb;
     
+    // Utiliser la constante pour l'ID du champ mots-clés
+    $field_keywords_id = defined( 'MSHPS_WSFORM_FIELD_KEYWORDS' ) ? MSHPS_WSFORM_FIELD_KEYWORDS : 232;
 
-    // Récupérer la valeur du champ mots-clés (field_232)
+    // Récupérer la valeur du champ mots-clés
     $meta_value = $wpdb->get_var($wpdb->prepare(
         "SELECT meta_value FROM {$wpdb->prefix}wsf_submit_meta 
-         WHERE parent_id = %d AND field_id = 232",
-        $submit->id
+         WHERE parent_id = %d AND field_id = %d",
+        $submit->id,
+        $field_keywords_id
     ));
 
     
@@ -834,7 +844,7 @@ function mshps_create_keywords_on_draft_save($submit) {
         $wpdb->update(
             $wpdb->prefix . 'wsf_submit_meta',
             array('meta_value' => $serialized_ids),
-            array('parent_id' => $submit->id, 'field_id' => 232),
+            array('parent_id' => $submit->id, 'field_id' => $field_keywords_id),
             array('%s'),
             array('%d', '%d')
         );
@@ -849,10 +859,16 @@ function mshps_create_keywords_on_draft_save($submit) {
  * Pré-remplit automatiquement les informations du porteur de projet
  * avec les données de l'utilisateur connecté dans le formulaire de candidature
  * 
- * Formulaire ID 8 (candidature)
- * Champs : 233 (nom), 234 (prénom), 235 (email), 236 (labo), 237 (établissement)
+ * Note : Le filtre est dynamique basé sur MSHPS_WSFORM_CANDIDATURE_ID
+ * Champs utilisés : Nom, Prénom, Email, Laboratoire, Établissement
  */
-add_filter('wsf_pre_render_8', 'mshps_prefill_user_info_in_form', 10, 2);
+add_action( 'init', function() {
+    // Construire le nom du hook dynamiquement
+    $form_id = defined( 'MSHPS_WSFORM_CANDIDATURE_ID' ) ? MSHPS_WSFORM_CANDIDATURE_ID : 8;
+    $hook = 'wsf_pre_render_' . $form_id;
+    add_filter( $hook, 'mshps_prefill_user_info_in_form', 10, 2 );
+} );
+
 function mshps_prefill_user_info_in_form($form, $preview) {
     // Ne pré-remplir que si l'utilisateur est connecté
     if (!is_user_logged_in()) {
@@ -861,13 +877,20 @@ function mshps_prefill_user_info_in_form($form, $preview) {
     
     $current_user = wp_get_current_user();
     
+    // Utiliser les constantes pour les IDs de champs
+    $field_nom = defined( 'MSHPS_WSFORM_FIELD_NOM' ) ? MSHPS_WSFORM_FIELD_NOM : 233;
+    $field_prenom = defined( 'MSHPS_WSFORM_FIELD_PRENOM' ) ? MSHPS_WSFORM_FIELD_PRENOM : 234;
+    $field_email = defined( 'MSHPS_WSFORM_FIELD_EMAIL' ) ? MSHPS_WSFORM_FIELD_EMAIL : 235;
+    $field_labo = defined( 'MSHPS_WSFORM_FIELD_LABORATOIRE' ) ? MSHPS_WSFORM_FIELD_LABORATOIRE : 236;
+    $field_etab = defined( 'MSHPS_WSFORM_FIELD_ETABLISSEMENT' ) ? MSHPS_WSFORM_FIELD_ETABLISSEMENT : 237;
+    
     // Récupérer les informations de l'utilisateur
     $user_data = array(
-        233 => $current_user->last_name,           // Nom
-        234 => $current_user->first_name,          // Prénom
-        235 => $current_user->user_email,          // Email
-        236 => get_user_meta($current_user->ID, 'laboratoire', true),     // Laboratoire
-        237 => get_user_meta($current_user->ID, 'etablissement', true),   // Établissement
+        $field_nom => $current_user->last_name,           // Nom
+        $field_prenom => $current_user->first_name,          // Prénom
+        $field_email => $current_user->user_email,          // Email
+        $field_labo => get_user_meta($current_user->ID, 'laboratoire', true),     // Laboratoire
+        $field_etab => get_user_meta($current_user->ID, 'etablissement', true),   // Établissement
     );
     
     // Parcourir les groupes du formulaire
@@ -1381,7 +1404,7 @@ function mshps_handle_add_evaluation() {
     $redirect   = $_POST['redirect'];
     
     // Config identique à la modale
-    $criteres_keys = ['interinst', 'interdisc', 'novateur', 'objectifs', 'science', 'equipe', 'perspectives', 'budget'];
+    $criteres_keys = ['interinstit', 'interdisc', 'novateur', 'objectifs', 'science', 'equipe', 'perspectives', 'budget'];
 
     // 2. Création du Post Evaluation
     $nom = sanitize_text_field($_POST['evaluateur_nom']);
@@ -1392,7 +1415,7 @@ function mshps_handle_add_evaluation() {
     $commentaire_general = sanitize_text_field($_POST['commentaire_general']);
     
     // Titre ex: "Éval B - Angela Marques"
-    $title = sprintf('Éval %s - %s %s', $note_globale, $nom, $prenom);
+    $title = sprintf('Éval %s - %s %s', $note_generale, $nom, $prenom);
 
     $eval_id = wp_insert_post([
         'post_type'    => 'evaluation',
@@ -1402,7 +1425,7 @@ function mshps_handle_add_evaluation() {
 
     if ( $eval_id ) {
         // 3. Sauvegarde Métas
-        update_field( 'eval_project_id', $project_id, $eval_id );
+        update_field( 'eval_projet_id', $project_id, $eval_id );
         
         // Infos Evaluateur
         update_field( 'evaluateur_nom', $nom, $eval_id );

@@ -13,10 +13,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'MSHPS_AAP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'MSHPS_AAP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
-// Rôles à l’activation
+// Rôles à l'activation
 register_activation_hook( __FILE__, 'mshps_aap_add_roles' );
 
-// Charger d'abord les utilitaires
+// Charger la configuration WS Form (IDs centralisés)
+require_once MSHPS_AAP_PLUGIN_DIR . 'inc/wsform-config.php';
+
+// Charger les modules
 require_once MSHPS_AAP_PLUGIN_DIR . 'inc/setup.php'; // Création des statuts de projets customs (post-status)
 require_once MSHPS_AAP_PLUGIN_DIR . 'inc/users.php'; // Création des rôles customs
 require_once MSHPS_AAP_PLUGIN_DIR . 'inc/utils.php'; // log, génération de la référence de projet
