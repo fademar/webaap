@@ -162,10 +162,10 @@
                         "id": ""
                     },
                     "choices": {
-                        "a:A": "a:A",
-                        "b:B": "b:B",
-                        "c:C": "c:C",
-                        "d:D": "d:D"
+                        "A": "A",
+                        "B": "B",
+                        "C": "C",
+                        "D": "D"
                     },
                     "default_value": false,
                     "return_format": "value",
@@ -214,10 +214,10 @@
                         "id": ""
                     },
                     "choices": {
-                        "a:A": "a:A",
-                        "b:B": "b:B",
-                        "c:C": "c:C",
-                        "d:D": "d:D"
+                        "A": "A",
+                        "B": "B",
+                        "C": "C",
+                        "D": "D"
                     },
                     "default_value": false,
                     "return_format": "value",
@@ -266,10 +266,10 @@
                         "id": ""
                     },
                     "choices": {
-                        "a:A": "a:A",
-                        "b:B": "b:B",
-                        "c:C": "c:C",
-                        "d:D": "d:D"
+                        "A": "A",
+                        "B": "B",
+                        "C": "C",
+                        "D": "D"
                     },
                     "default_value": false,
                     "return_format": "value",
@@ -318,10 +318,10 @@
                         "id": ""
                     },
                     "choices": {
-                        "a:A": "a:A",
-                        "b:B": "b:B",
-                        "c:C": "c:C",
-                        "d:D": "d:D"
+                        "A": "A",
+                        "B": "B",
+                        "C": "C",
+                        "D": "D"
                     },
                     "default_value": false,
                     "return_format": "value",
@@ -370,10 +370,10 @@
                         "id": ""
                     },
                     "choices": {
-                        "a:A": "a:A",
-                        "b:B": "b:B",
-                        "c:C": "c:C",
-                        "d:D": "d:D"
+                        "A": "A",
+                        "B": "B",
+                        "C": "C",
+                        "D": "D"
                     },
                     "default_value": false,
                     "return_format": "value",
@@ -422,10 +422,10 @@
                         "id": ""
                     },
                     "choices": {
-                        "a:A": "a:A",
-                        "b:B": "b:B",
-                        "c:C": "c:C",
-                        "d:D": "d:D"
+                        "A": "A",
+                        "B": "B",
+                        "C": "C",
+                        "D": "D"
                     },
                     "default_value": false,
                     "return_format": "value",
@@ -474,10 +474,10 @@
                         "id": ""
                     },
                     "choices": {
-                        "a:A": "a:A",
-                        "b:B": "b:B",
-                        "c:C": "c:C",
-                        "d:D": "d:D"
+                        "A": "A",
+                        "B": "B",
+                        "C": "C",
+                        "D": "D"
                     },
                     "default_value": false,
                     "return_format": "value",
@@ -526,10 +526,10 @@
                         "id": ""
                     },
                     "choices": {
-                        "a:A": "a:A",
-                        "b:B": "b:B",
-                        "c:C": "c:C",
-                        "d:D": "d:D"
+                        "A": "A",
+                        "B": "B",
+                        "C": "C",
+                        "D": "D"
                     },
                     "default_value": false,
                     "return_format": "value",
@@ -580,10 +580,10 @@
                 "id": ""
             },
             "choices": {
-                "a:A": "a:A",
-                "b:B": "b:B",
-                "c:C": "c:C",
-                "d:D": "d:D"
+                "A": "A",
+                "B": "B",
+                "C": "C",
+                "D": "D"
             },
             "default_value": false,
             "return_format": "value",
@@ -637,5 +637,5 @@
     "description": "",
     "show_in_rest": 0,
     "display_title": "",
-    "modified": 1767799055
+    "modified": 1767885150
 }

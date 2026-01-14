@@ -11,7 +11,9 @@ get_header('test');
 
 $current_user = wp_get_current_user();
 $user_id = $current_user->ID;
-$form_id = 8; // <--- VÉRIFIEZ L'ID FORMULAIRE
+
+// Utiliser la constante centralisée pour l'ID du formulaire
+$form_id = defined( 'MSHPS_WSFORM_CANDIDATURE_ID' ) ? MSHPS_WSFORM_CANDIDATURE_ID : 8;
 
 // --- RÉCUPÉRATION DES PROJETS DÉPOSÉS (Via WordPress CPT) ---
 // On garde cette partie car c'est la seule qui connaît les statuts "Instruction", "Refusé", etc.
@@ -33,6 +35,13 @@ $submitted_projects = new WP_Query($args);
     get_template_part( 'template-parts/layout/page-header', null, [
         'title'    => 'Bonjour, ' . ( $current_user->first_name ?: $current_user->display_name ),
         'subtitle' => 'Gérez vos candidatures aux appels à projet de la MSH Paris-Saclay et suivez leur avancement.',
+        'actions'  => [
+            [
+                'label' => 'Nouveau projet',
+                'url'   => home_url( '/nouveau-projet/' ),
+                'class' => 'inline-flex items-center px-5 py-2.5 rounded-lg bg-primaire text-white text-sm font-medium hover:bg-primaire/90 transition-colors shadow-sm hover:shadow-md',
+            ],
+        ],
     ] );
     ?>
 

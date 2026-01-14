@@ -4,7 +4,7 @@
  */
 
 get_header('front');
-$shortcode = '[ws_form id="10"]';
+
 ?>
 
 <main class="flex-grow flex items-center justify-center p-4 font-sans">
@@ -28,8 +28,7 @@ $shortcode = '[ws_form id="10"]';
                 <h1 class="text-2xl font-bold text-gray-800 mt-8">Connexion</h1>
                 <p class="text-gray-400 text-sm mt-1">Identifiez-vous pour accéder à votre espace.</p>
             </div>
-            <?php echo do_shortcode($shortcode); ?>
-
+            <?php the_content();?>
 
             <div class="mt-8 text-center">
                  <p class="text-sm text-gray-400">Besoin d'un compte ? <a href="/inscription/" class="text-blue-600 hover:underline">Inscrivez-vous</a>.</p>
