@@ -5,6 +5,16 @@
  * @package msh-webaap
  */
 
+ // Empêcher le cache navigateur
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+
+// Empêcher le cache LiteSpeed (Spécifique Hostinger)
+if (defined('LSCWP_V')) {
+    do_action( 'litespeed_disable_cache' );
+}
+
 ?><!doctype html>
 <html <?php language_attributes(); ?>>
 <head>
