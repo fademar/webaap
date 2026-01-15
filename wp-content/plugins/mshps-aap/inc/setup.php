@@ -260,3 +260,17 @@ add_filter('wsf_redirect_after_login', function($form_object, $submit_object) {
     ];
 
 }, 10, 2);
+
+/**
+ * Désactive TOUTE reprise automatique WS Form
+ * si wsf_hash n'est pas explicitement présent dans l'URL.
+ */
+add_filter('wsf_hash', function ($hash, $form_id) {
+
+    if ( empty($_GET['wsf_hash']) ) {
+        return '';
+    }
+
+    return sanitize_text_field($_GET['wsf_hash']);
+
+}, 100, 2);
