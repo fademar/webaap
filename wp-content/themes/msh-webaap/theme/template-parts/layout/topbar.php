@@ -70,7 +70,6 @@ if ( is_page('dashboard') || is_page('mes-projets') ) {
                 <div class="flex items-center gap-3 pl-3 border-l border-gray-200">
                     <div class="hidden md:flex flex-col items-end">
                         <span class="text-sm font-medium text-gray-900 leading-none mb-1"><?php echo esc_html($current_user->display_name); ?></span>
-                        <span class="text-[10px] uppercase tracking-wide text-gray-500 font-semibold"><?php echo $is_msh ? 'Équipe MSH' : 'Candidat'; ?></span>
                     </div>
                     <div class="w-9 h-9 rounded-full bg-primaire flex items-center justify-center text-white text-sm font-bold shadow-sm ring-2 ring-white">
                         <?php echo strtoupper(substr($current_user->display_name, 0, 1)); ?>

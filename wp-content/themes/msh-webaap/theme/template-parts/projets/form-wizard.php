@@ -32,11 +32,20 @@ if ( $vague_active_id ) {
 }
 $shortcode .= ']';
 
+// Logique de redirection :
+// On vérifie si 'wsf_hash' est présent dans l'URL.
+// Si oui, c'est qu'on reprend un brouillon existant.
+$is_editing_draft = isset($_GET['wsf_hash']) && !empty($_GET['wsf_hash']);
+
+// - Si c'est un brouillon -> Retour à la liste 'mes-projets'
+// - Si c'est une création -> Retour à 'nouveau-projet' (ce qui équivaut à un reset/annuler)
+$close_url = $is_editing_draft ? home_url('/mes-projets') : home_url('/nouveau-projet');
+
 ?>
 
 <div class="flex items-center justify-between mb-8">
     <h2 class="text-2xl font-bold text-gray-800">Formulaire de candidature<span class="text-primaire font-bold"> • <?php echo esc_html( $ptype_label ); ?></span></h2>
-    <a href="<?php echo esc_url( home_url('/nouveau-projet') ); ?>" class="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-full hover:bg-red-50 hover:text-red-600 transition-colors">
+    <a href="<?php echo esc_url( $close_url ); ?>" class="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-full hover:bg-red-50 hover:text-red-600 transition-colors">
         <i class="fa-solid fa-times"></i>
     </a>
 </div>

@@ -1044,9 +1044,10 @@
                 "id": ""
             },
             "choices": {
-                "none": "Pas d'impression (Campagne 100% numérique)",
-                "cible": "Affichage ciblé (Max 5 exemplaires - Lieux stratégiques)",
-                "complet": "Affichage étendu (Justification requise)"
+                "numerique": "Oui, pour une campagne 100% numérique (aucune impression)",
+                "cible": "Oui, pour un affichage ciblé (Impression de 10 affiches + programme numérique)",
+                "complet": "Oui, pour un affichage étendu (une justification est requise)",
+                "none": "Je n'ai pas besoin du kit de communication"
             },
             "default_value": false,
             "return_format": "value",
@@ -1516,5 +1517,5 @@
     "description": "",
     "show_in_rest": 0,
     "display_title": "",
-    "modified": 1767879815
+    "modified": 1768468514
 }
