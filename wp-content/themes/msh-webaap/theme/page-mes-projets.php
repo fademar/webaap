@@ -7,7 +7,7 @@ if ( ! is_user_logged_in() ) {
     auth_redirect();
 }
 
-get_header('test'); 
+get_header('app'); 
 
 $current_user = wp_get_current_user();
 $user_id = $current_user->ID;
@@ -28,7 +28,6 @@ $submitted_projects = new WP_Query($args);
 
 
 <main id="app-main-content" class="min-h-screen bg-slate-50/50">
-<?php get_template_part( 'template-parts/layout/topbar', null, [ 'active_page' => 'mes-projets' ] ); ?>
 <div class="max-w-[1400px] mx-auto my-4 px-6 lg:px-8 py-8 bg-white border border-gray-200/60 rounded-2xl">
     
     <?php
@@ -182,4 +181,4 @@ $submitted_projects = new WP_Query($args);
 </div>
 </main>
 
-<?php get_footer('test'); ?>
+<?php get_footer('app'); ?>

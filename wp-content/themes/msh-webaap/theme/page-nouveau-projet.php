@@ -4,7 +4,7 @@
  */
 
 // WS Form gère ses propres headers, on peut retirer acf_form_head()
-get_header('test'); 
+get_header('app'); 
 
 // 1. Récupération du paramètre d'URL
 $ptype = isset($_GET['ptype']) ? sanitize_text_field($_GET['ptype']) : null;
@@ -17,7 +17,6 @@ $valid_types = ['se', 'ws', 'ma', 'em'];
 ?>
 
     <main id="app-main-content" class="min-h-screen bg-slate-50/50">
-        <?php get_template_part( 'template-parts/layout/topbar', null, [ 'active_page' => 'nouveau-projet' ] ); ?>
 
         <div class="max-w-[1400px] mx-auto my-4 px-6 lg:px-8 py-8 bg-white border border-gray-200/60 rounded-2xl">
 
@@ -50,4 +49,27 @@ $valid_types = ['se', 'ws', 'ma', 'em'];
         </div>
     </main>
 
-<?php get_footer('test'); ?>
+    <script>
+        document.addEventListener('wsf_ready', function () {
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const hasHash = urlParams.has('wsf_hash');
+
+        if (!hasHash) {
+
+            // Pour chaque formulaire WS Form sur la page
+            if (typeof wsf_form !== 'undefined') {
+            Object.values(wsf_form).forEach(function(form) {
+
+                // Revenir à la première page / onglet
+                if (typeof form.goto === 'function') {
+                form.goto(0);
+                }
+
+            });
+            }
+
+        }
+        });
+    </script>
+<?php get_footer('app'); ?>

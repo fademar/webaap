@@ -1775,6 +1775,9 @@ form[data-id="9"] fieldset.wsf-section {
 .min-h-screen {
   min-height: 100vh;
 }
+.w-1\/2 {
+  width: calc(1/2 * 100%);
+}
 .w-2 {
   width: calc(var(--spacing) * 2);
 }
