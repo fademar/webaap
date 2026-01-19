@@ -55,21 +55,23 @@ $valid_types = ['se', 'ws', 'ma', 'em'];
         const urlParams = new URLSearchParams(window.location.search);
         const hasHash = urlParams.has('wsf_hash');
 
-        if (!hasHash) {
+        if (!hasHash && typeof wsf_form !== 'undefined') {
 
-            // Pour chaque formulaire WS Form sur la page
-            if (typeof wsf_form !== 'undefined') {
-            Object.values(wsf_form).forEach(function(form) {
+            Object.values(wsf_form).forEach(function (form) {
 
-                // Revenir à la première page / onglet
-                if (typeof form.goto === 'function') {
+            // 1. Reset interne de la pagination
+            if (typeof form.page_set === 'function') {
+                form.page_set(0);
+            }
+
+            // 2. Synchronisation explicite de l’UI
+            if (typeof form.goto === 'function') {
                 form.goto(0);
-                }
+            }
 
             });
-            }
 
         }
         });
-    </script>
+</script>
 <?php get_footer('app'); ?>
