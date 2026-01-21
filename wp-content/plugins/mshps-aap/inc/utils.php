@@ -1453,3 +1453,132 @@ function mshps_handle_add_evaluation() {
     wp_redirect( $redirect );
     exit;
 }
+
+add_action('wp_ajax_msh_create_wave', 'msh_plugin_handle_create_wave');
+
+function msh_plugin_handle_create_wave() {
+    // 1. SÉCURITÉ : Vérification du Nonce
+    check_ajax_referer('msh_wave_nonce', 'nonce');
+    
+    // 2. SÉCURITÉ : Vérification du droit spécifique demandé
+    if (!current_user_can('edit_others_posts')) {
+        wp_send_json_error(['message' => 'Action non autorisée. Droits insuffisants.']);
+        return; // Important d'arrêter l'exécution ici
+    }
+
+    // 3. RÉCUPÉRATION
+    $name       = sanitize_text_field($_POST['wave_name']);
+    $start_date = sanitize_text_field($_POST['start_date']);
+    $end_date   = sanitize_text_field($_POST['end_date']);
+
+    if (empty($name) || empty($start_date) || empty($end_date)) {
+        wp_send_json_error(['message' => 'Tous les champs sont requis.']);
+    }
+
+    // 4. CRÉATION DU TERME
+    $term = wp_insert_term($name, 'projet_vague');
+
+    if (is_wp_error($term)) {
+        wp_send_json_error(['message' => $term->get_error_message()]);
+    }
+
+    $term_id = $term['term_id'];
+    $acf_term_id = 'projet_vague' . $term_id;
+
+    // 5. FORMATAGE ET SAUVEGARDE ACF
+    $start_ymd = date('Ymd', strtotime($start_date));
+    $end_ymd   = date('Ymd', strtotime($end_date));
+
+    update_field('vague_date_ouverture', $start_ymd, $acf_term_id);
+    update_field('vague_date_cloture', $end_ymd, $acf_term_id);
+
+    // 6. CALCUL DU STATUT
+    $today = date('Ymd');
+    $is_active = ($today >= $start_ymd && $today <= $end_ymd);
+
+    update_field('is_current', $is_active, $acf_term_id);
+
+    // 7. NETTOYAGE (Si nouvelle vague active, désactiver les autres)
+    if ($is_active) {
+        $terms = get_terms(['taxonomy' => 'vague_projet', 'hide_empty' => false, 'exclude' => [$term_id]]);
+        if (!is_wp_error($terms)) {
+            foreach ($terms as $other_term) {
+                update_field('is_current', false, 'vague_projet_' . $other_term->term_id);
+            }
+        }
+    }
+
+    wp_send_json_success([
+        'message' => 'Vague créée avec succès !', 
+        'is_active' => $is_active
+    ]);
+}
+
+// Dans votre fichier plugin (aap-msh-core.php ou similaire)
+
+add_action( 'admin_post_msh_handle_create_wave_post', 'msh_handle_create_wave_submission' );
+
+function msh_handle_create_wave_submission() {
+    // 1. SÉCURITÉ
+    if ( ! isset( $_POST['msh_wave_nonce'] ) || ! wp_verify_nonce( $_POST['msh_wave_nonce'], 'msh_create_wave_action' ) ) {
+        wp_die( 'Sécurité invalide' );
+    }
+
+    if ( ! current_user_can( 'edit_others_posts' ) ) {
+        wp_die( 'Non autorisé' );
+    }
+
+    // 2. RÉCUPÉRATION
+    $name       = sanitize_text_field( $_POST['wave_name'] );
+    $start_date = sanitize_text_field( $_POST['start_date'] );
+    $end_date   = sanitize_text_field( $_POST['end_date'] );
+    
+    // URL de retour
+    $redirect_url = wp_get_referer() ? wp_get_referer() : home_url('/dashboard');
+
+    // 3. CRÉATION DU TERME
+    // ICI : On utilise le slug exact 'projet_vague'
+    $term = wp_insert_term( $name, 'projet_vague' );
+
+    if ( is_wp_error( $term ) ) {
+        wp_redirect( add_query_arg( 'msh_msg', 'error', $redirect_url ) );
+        exit;
+    }
+
+    $term_id = $term['term_id'];
+    
+    // IMPORTANT POUR ACF : Le format est toujours 'taxonomie_termID'
+    $acf_term_id = 'projet_vague_' . $term_id;
+
+    // 4. ACF & LOGIQUE
+    $start_ymd = date('Ymd', strtotime($start_date));
+    $end_ymd   = date('Ymd', strtotime($end_date));
+    $today     = date('Ymd');
+    
+    $is_active = ($today >= $start_ymd && $today <= $end_ymd);
+
+    // Mise à jour des champs ACF
+    update_field('vague_date_ouverture', $start_ymd, $acf_term_id);
+    update_field('vague_date_cloture', $end_ymd, $acf_term_id);
+    update_field('is_current', $is_active, $acf_term_id);
+
+    // 5. NETTOYAGE (Désactiver les autres vagues si celle-ci est active)
+    if ($is_active) {
+        $terms = get_terms([
+            'taxonomy'   => 'projet_vague', // ICI aussi
+            'hide_empty' => false, 
+            'exclude'    => [$term_id]
+        ]);
+        
+        if (!is_wp_error($terms)) {
+            foreach ($terms as $other_term) {
+                // Construction de l'ID ACF pour les autres termes
+                update_field('is_current', false, 'projet_vague_' . $other_term->term_id);
+            }
+        }
+    }
+
+    // 6. REDIRECTION SUCCÈS
+    wp_redirect( add_query_arg( 'msh_msg', 'success', $redirect_url ) );
+    exit;
+}

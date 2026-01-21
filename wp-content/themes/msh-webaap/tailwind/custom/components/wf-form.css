@@ -2,8 +2,8 @@
    Onglets WS Form
    =========================== */
    
-#ws-form-1  ul.wsf-steps {
-    @apply mb-10;
+#ws-form-1 .wsf-group-tabs {
+  @apply mb-8
 }
 
 /* ===========================

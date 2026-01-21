@@ -49,6 +49,8 @@ Underscores and Varia are distributed under the terms of the GNU GPL v2 or later
   --color-green-50: oklch(98.2% 0.018 155.826);
   --color-green-100: oklch(96.2% 0.044 156.743);
   --color-green-200: oklch(92.5% 0.084 155.995);
+  --color-green-400: oklch(79.2% 0.209 151.711);
+  --color-green-500: oklch(72.3% 0.219 149.579);
   --color-green-600: oklch(62.7% 0.194 149.214);
   --color-green-700: oklch(52.7% 0.154 150.069);
   --color-green-800: oklch(44.8% 0.119 151.328);
@@ -150,6 +152,7 @@ Underscores and Varia are distributed under the terms of the GNU GPL v2 or later
   --radius-xl: 0.75rem;
   --radius-2xl: 1rem;
   --radius-3xl: 1.5rem;
+  --animate-ping: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
   --blur-sm: 8px;
   --blur-xl: 24px;
   --default-transition-duration: 150ms;
@@ -637,8 +640,8 @@ form[data-id="9"] fieldset.wsf-section {
   line-height: var(--tw-leading, var(--text-sm--line-height));
   color: var(--color-slate-900);
 }
-#ws-form-1 ul.wsf-steps {
-  margin-bottom: calc(var(--spacing) * 10);
+#ws-form-1 .wsf-group-tabs {
+  margin-bottom: calc(var(--spacing) * 8);
 }
 #ws-form-1 fieldset.wsf-section > legend {
   margin-bottom: calc(var(--spacing) * 4);
@@ -1655,6 +1658,9 @@ form[data-id="9"] fieldset.wsf-section {
 .mt-3 {
   margin-top: calc(var(--spacing) * 3);
 }
+.mt-4 {
+  margin-top: calc(var(--spacing) * 4);
+}
 .mt-6 {
   margin-top: calc(var(--spacing) * 6);
 }
@@ -1702,6 +1708,12 @@ form[data-id="9"] fieldset.wsf-section {
 }
 .ml-1 {
   margin-left: calc(var(--spacing) * 1);
+}
+.ml-2 {
+  margin-left: calc(var(--spacing) * 2);
+}
+.ml-4 {
+  margin-left: calc(var(--spacing) * 4);
 }
 .ml-auto {
   margin-left: auto;
@@ -1875,6 +1887,9 @@ form[data-id="9"] fieldset.wsf-section {
 .transform {
   transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
 }
+.animate-ping {
+  animation: var(--animate-ping);
+}
 .cursor-pointer {
   cursor: pointer;
 }
@@ -1883,6 +1898,9 @@ form[data-id="9"] fieldset.wsf-section {
 }
 .grid-cols-1 {
   grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .flex-col {
   flex-direction: column;
@@ -1955,6 +1973,11 @@ form[data-id="9"] fieldset.wsf-section {
   margin-block-start: calc(calc(var(--spacing) * 4) * var(--tw-space-y-reverse));
   margin-block-end: calc(calc(var(--spacing) * 4) * calc(1 - var(--tw-space-y-reverse)));
 }
+:where(.space-y-5 > :not(:last-child)) {
+  --tw-space-y-reverse: 0;
+  margin-block-start: calc(calc(var(--spacing) * 5) * var(--tw-space-y-reverse));
+  margin-block-end: calc(calc(var(--spacing) * 5) * calc(1 - var(--tw-space-y-reverse)));
+}
 :where(.space-y-6 > :not(:last-child)) {
   --tw-space-y-reverse: 0;
   margin-block-start: calc(calc(var(--spacing) * 6) * var(--tw-space-y-reverse));
@@ -2026,6 +2049,10 @@ form[data-id="9"] fieldset.wsf-section {
 .rounded-xl {
   border-radius: var(--radius-xl);
 }
+.rounded-t-xl {
+  border-top-left-radius: var(--radius-xl);
+  border-top-right-radius: var(--radius-xl);
+}
 .border {
   border-style: var(--tw-border-style);
   border-width: 1px;
@@ -2042,6 +2069,10 @@ form[data-id="9"] fieldset.wsf-section {
   border-block-style: var(--tw-border-style);
   border-block-width: 1px;
 }
+.border-t {
+  border-top-style: var(--tw-border-style);
+  border-top-width: 1px;
+}
 .border-b {
   border-bottom-style: var(--tw-border-style);
   border-bottom-width: 1px;
@@ -2049,6 +2080,10 @@ form[data-id="9"] fieldset.wsf-section {
 .border-l {
   border-left-style: var(--tw-border-style);
   border-left-width: 1px;
+}
+.border-l-2 {
+  border-left-style: var(--tw-border-style);
+  border-left-width: 2px;
 }
 .border-dashed {
   --tw-border-style: dashed;
@@ -2103,6 +2138,9 @@ form[data-id="9"] fieldset.wsf-section {
 }
 .border-gray-300 {
   border-color: var(--color-gray-300);
+}
+.border-green-100 {
+  border-color: var(--color-green-100);
 }
 .border-green-200 {
   border-color: var(--color-green-200);
@@ -2219,6 +2257,12 @@ form[data-id="9"] fieldset.wsf-section {
 .bg-gray-200 {
   background-color: var(--color-gray-200);
 }
+.bg-gray-900 {
+  background-color: var(--color-gray-900);
+}
+.bg-green-50 {
+  background-color: var(--color-green-50);
+}
 .bg-green-50\/40 {
   background-color: color-mix(in srgb, oklch(98.2% 0.018 155.826) 40%, transparent);
 }
@@ -2229,6 +2273,12 @@ form[data-id="9"] fieldset.wsf-section {
 }
 .bg-green-100 {
   background-color: var(--color-green-100);
+}
+.bg-green-400 {
+  background-color: var(--color-green-400);
+}
+.bg-green-500 {
+  background-color: var(--color-green-500);
 }
 .bg-orange-100 {
   background-color: var(--color-orange-100);
@@ -2267,6 +2317,9 @@ form[data-id="9"] fieldset.wsf-section {
 .bg-red-500 {
   background-color: var(--color-red-500);
 }
+.bg-red-700 {
+  background-color: var(--color-red-700);
+}
 .bg-slate-50 {
   background-color: var(--color-slate-50);
 }
@@ -2302,6 +2355,9 @@ form[data-id="9"] fieldset.wsf-section {
   .bg-white\/80 {
     background-color: color-mix(in oklab, var(--color-white) 80%, transparent);
   }
+}
+.p-0 {
+  padding: calc(var(--spacing) * 0);
 }
 .p-1\.5 {
   padding: calc(var(--spacing) * 1.5);
@@ -2378,6 +2434,9 @@ form[data-id="9"] fieldset.wsf-section {
 .py-8 {
   padding-block: calc(var(--spacing) * 8);
 }
+.pt-4 {
+  padding-top: calc(var(--spacing) * 4);
+}
 .pr-4 {
   padding-right: calc(var(--spacing) * 4);
 }
@@ -2386,6 +2445,9 @@ form[data-id="9"] fieldset.wsf-section {
 }
 .pb-6 {
   padding-bottom: calc(var(--spacing) * 6);
+}
+.pl-2 {
+  padding-left: calc(var(--spacing) * 2);
 }
 .pl-3 {
   padding-left: calc(var(--spacing) * 3);
@@ -2616,6 +2678,12 @@ form[data-id="9"] fieldset.wsf-section {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+.opacity-0 {
+  opacity: 0%;
+}
+.opacity-75 {
+  opacity: 75%;
+}
 .opacity-90 {
   opacity: 90%;
 }
@@ -2737,6 +2805,10 @@ form[data-id="9"] fieldset.wsf-section {
   --tw-duration: 300ms;
   transition-duration: 300ms;
 }
+.duration-500 {
+  --tw-duration: 500ms;
+  transition-duration: 500ms;
+}
 .content-none {
   --tw-content: none;
   content: none;
@@ -2857,6 +2929,14 @@ form[data-id="9"] fieldset.wsf-section {
     color: var(--color-pink-600);
   }
 }
+.backdrop\:bg-gray-900\/60::backdrop {
+  background-color: color-mix(in srgb, oklch(21% 0.034 264.665) 60%, transparent);
+}
+@supports (color: color-mix(in lab, red, red)) {
+  .backdrop\:bg-gray-900\/60::backdrop {
+    background-color: color-mix(in oklab, var(--color-gray-900) 60%, transparent);
+  }
+}
 .last\:border-0:last-child {
   border-style: var(--tw-border-style);
   border-width: 0px;
@@ -2973,6 +3053,11 @@ form[data-id="9"] fieldset.wsf-section {
   }
 }
 @media (hover: hover) {
+  .hover\:bg-gray-800:hover {
+    background-color: var(--color-gray-800);
+  }
+}
+@media (hover: hover) {
   .hover\:bg-green-100\/60:hover {
     background-color: color-mix(in srgb, oklch(96.2% 0.044 156.743) 60%, transparent);
   }
@@ -3010,6 +3095,11 @@ form[data-id="9"] fieldset.wsf-section {
 @media (hover: hover) {
   .hover\:bg-red-100:hover {
     background-color: var(--color-red-100);
+  }
+}
+@media (hover: hover) {
+  .hover\:bg-red-800:hover {
+    background-color: var(--color-red-800);
   }
 }
 @media (hover: hover) {
@@ -3130,6 +3220,9 @@ form[data-id="9"] fieldset.wsf-section {
 .focus\:border-primaire:focus {
   border-color: var(--color-primaire);
 }
+.focus\:border-red-600:focus {
+  border-color: var(--color-red-600);
+}
 .focus\:border-slate-900:focus {
   border-color: var(--color-slate-900);
 }
@@ -3160,6 +3253,9 @@ form[data-id="9"] fieldset.wsf-section {
   .focus\:ring-primaire\/30:focus {
     --tw-ring-color: color-mix(in oklab, var(--color-primaire) 30%, transparent);
   }
+}
+.focus\:ring-red-600:focus {
+  --tw-ring-color: var(--color-red-600);
 }
 .focus\:ring-slate-900:focus {
   --tw-ring-color: var(--color-slate-900);
@@ -3581,6 +3677,12 @@ form[data-id="9"] fieldset.wsf-section {
   syntax: "*";
   inherits: false;
   initial-value: 1;
+}
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
 }
 @layer properties {
   @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {

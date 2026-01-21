@@ -306,6 +306,40 @@
                     "append": ""
                 },
                 {
+                    "key": "field_696f42f61f6f3",
+                    "label": "Statut",
+                    "name": "statut",
+                    "aria-label": "",
+                    "type": "select",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "dr": "Directeur·rice de recherche",
+                        "cr": "Chargé·e de recherche",
+                        "pr": "Professeur·e des universités",
+                        "mcf": "Maître·sse de conférences",
+                        "inge": "Ingénieur·e",
+                        "postdoc": "Post-doctorant·e",
+                        "doc": "Doctorant·e"
+                    },
+                    "default_value": false,
+                    "return_format": "value",
+                    "multiple": 0,
+                    "allow_null": 0,
+                    "allow_in_bindings": 0,
+                    "ui": 0,
+                    "ajax": 0,
+                    "placeholder": "",
+                    "create_options": 0,
+                    "save_options": 0
+                },
+                {
                     "key": "field_693b07e3ccf73",
                     "label": "Laboratoire",
                     "name": "laboratoire",
@@ -455,6 +489,41 @@
                     "placeholder": "",
                     "prepend": "",
                     "append": "",
+                    "parent_repeater": "field_692722ea7171e"
+                },
+                {
+                    "key": "field_696f446c452a5",
+                    "label": "Statut",
+                    "name": "statut",
+                    "aria-label": "",
+                    "type": "select",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "dr": "Directeur·rice de recherche",
+                        "cr": "Chargé·e de recherche",
+                        "pr": "Professeur·e des universités",
+                        "mcf": "Maître·sse de conférences",
+                        "inge": "Ingénieur·e",
+                        "postdoc": "Post-doctorant·e",
+                        "doc": "Doctorant·e"
+                    },
+                    "default_value": false,
+                    "return_format": "value",
+                    "multiple": 0,
+                    "allow_null": 0,
+                    "allow_in_bindings": 0,
+                    "ui": 0,
+                    "ajax": 0,
+                    "placeholder": "",
+                    "create_options": 0,
+                    "save_options": 0,
                     "parent_repeater": "field_692722ea7171e"
                 },
                 {
@@ -733,74 +802,25 @@
             "selected": 0
         },
         {
-            "key": "field_6927299b7c7c8",
-            "label": "Date de début prévisionnelle",
-            "name": "cand_date_debut",
+            "key": "field_696f747305b1c",
+            "label": "Calendrier prévisionnel",
+            "name": "cand_calendrier_previsionnel",
             "aria-label": "",
-            "type": "date_picker",
+            "type": "textarea",
             "instructions": "",
             "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_69272ad091972",
-                        "operator": "==",
-                        "value": "55"
-                    }
-                ],
-                [
-                    {
-                        "field": "field_69272ad091972",
-                        "operator": "==",
-                        "value": "56"
-                    }
-                ]
-            ],
+            "conditional_logic": 0,
             "wrapper": {
                 "width": "",
                 "class": "",
                 "id": ""
             },
-            "display_format": "d\/m\/Y",
-            "return_format": "Ymd",
-            "first_day": 1,
-            "default_to_current_date": 0,
-            "allow_in_bindings": 0
-        },
-        {
-            "key": "field_6927320a86311",
-            "label": "Date de fin prévisionnelle",
-            "name": "cand_date_fin",
-            "aria-label": "",
-            "type": "date_picker",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_69272ad091972",
-                        "operator": "==",
-                        "value": "55"
-                    }
-                ],
-                [
-                    {
-                        "field": "field_69272ad091972",
-                        "operator": "==",
-                        "value": "56"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "display_format": "d\/m\/Y",
-            "return_format": "Ymd",
-            "first_day": 1,
-            "default_to_current_date": 0,
-            "allow_in_bindings": 0
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "rows": "",
+            "placeholder": "",
+            "new_lines": ""
         },
         {
             "key": "field_69272ffb943c7",
@@ -829,6 +849,37 @@
             "first_day": 1,
             "default_to_current_date": 0,
             "allow_in_bindings": 0
+        },
+        {
+            "key": "field_696f74a305b1d",
+            "label": "Durée de l'événement",
+            "name": "cand_duree_event",
+            "aria-label": "",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_69272ad091972",
+                        "operator": "==",
+                        "value": "58"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "min": "",
+            "max": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "step": "",
+            "prepend": "",
+            "append": ""
         },
         {
             "key": "field_695bda061597c",
@@ -891,6 +942,35 @@
             "message": "Attention : Pour les projets Maturation et Émergence, la date de fin ne peut pas excéder le 31 décembre de l'année N+1 suivant la notification de labellisation.",
             "new_lines": "wpautop",
             "esc_html": 0
+        },
+        {
+            "key": "field_696f74ea7d329",
+            "label": "Programme prévisionnel",
+            "name": "cand_prog_previ",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_69272ad091972",
+                        "operator": "==",
+                        "value": "58"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "rows": "",
+            "placeholder": "",
+            "new_lines": ""
         },
         {
             "key": "field_692730f194218",
@@ -1496,6 +1576,27 @@
             "step": "",
             "prepend": "",
             "append": ""
+        },
+        {
+            "key": "field_696f75d6acfeb",
+            "label": "Souhaitez-vous que la MSH gère les fonds attribués ?",
+            "name": "cand_gestion_msh",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "Oui, je souhaite que les fonds attribués soient directement par la MSH",
+            "default_value": 0,
+            "allow_in_bindings": 0,
+            "ui": 0,
+            "ui_on_text": "",
+            "ui_off_text": ""
         }
     ],
     "location": [
@@ -1517,5 +1618,5 @@
     "description": "",
     "show_in_rest": 0,
     "display_title": "",
-    "modified": 1768468514
+    "modified": 1768912453
 }

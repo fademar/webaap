@@ -14,8 +14,8 @@ $shortcode = '[ws_form id="9"]';
         
         <div class="w-full md:w-1/2 relative overflow-hidden flex flex-col bg-primaire justify-center p-12 text-white">
             <div class="relative z-10">
-                <h2 class="text-3xl font-bold mb-4">MSH</h2>
-                <p class="text-lg">Gérez vos projets de recherche, vos équipes et vos financements en un seul endroit sécurisé.</p>
+                <img src="/wp-content/uploads/2026/01/logo-MSH2025-blanc.png" alt="MSH Paris-Saclay" class="w-1/2 mb-8">
+                <p class="text-lg">Gérez vos candidatures aux appels à projets de la MSH Paris-Saclay.</p>
             </div>
         </div>
         
