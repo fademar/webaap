@@ -3,6 +3,11 @@
  * Template Name: MSH - Nouveau Projet
  */
 
+// Sécurité : Redirection si non connecté
+if ( ! is_user_logged_in() ) {
+    auth_redirect();
+}
+
 // WS Form gère ses propres headers, on peut retirer acf_form_head()
 get_header('app'); 
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Header for test templates (no sidebar, topbar only)
+ * Header for templates app (no sidebar, topbar only)
  *
  * @package msh-webaap
  */

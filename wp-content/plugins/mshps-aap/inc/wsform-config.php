@@ -83,6 +83,12 @@ define( 'MSHPS_WSFORM_FIELD_LABORATOIRE', 236 );
  */
 define( 'MSHPS_WSFORM_FIELD_ETABLISSEMENT', 237 );
 
+/**
+ * Champ Statut du porteur
+ * Type : Select
+ */
+define( 'MSHPS_WSFORM_FIELD_STATUT', 409 );
+
 // ============================================================================
 // FONCTIONS HELPER (optionnelles, pour validation)
 // ============================================================================
@@ -105,6 +111,7 @@ function mshps_wsform_config_is_valid() {
         'MSHPS_WSFORM_FIELD_EMAIL',
         'MSHPS_WSFORM_FIELD_LABORATOIRE',
         'MSHPS_WSFORM_FIELD_ETABLISSEMENT',
+        'MSHPS_WSFORM_FIELD_STATUT',
     ];
     
     foreach ( $required_constants as $constant ) {
@@ -133,5 +140,6 @@ function mshps_wsform_get_config_map() {
         'Champ Email' => MSHPS_WSFORM_FIELD_EMAIL,
         'Champ Laboratoire' => MSHPS_WSFORM_FIELD_LABORATOIRE,
         'Champ Établissement' => MSHPS_WSFORM_FIELD_ETABLISSEMENT,
+        'Champ Statut' => MSHPS_WSFORM_FIELD_STATUT,
     ];
 }

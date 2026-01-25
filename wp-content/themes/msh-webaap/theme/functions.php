@@ -146,6 +146,7 @@ add_action( 'widgets_init', 'msh_webaap_widgets_init' );
  */
 function msh_webaap_scripts() {
 	wp_enqueue_style( 'msh-webaap-style', get_stylesheet_uri(), array(), MSH_WEBAAP_VERSION );
+	wp_enqueue_style( 'fontawesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css', array(), '6.5.1' );
 	wp_enqueue_script( 'msh-webaap-script', get_template_directory_uri() . '/js/script.min.js', array(), MSH_WEBAAP_VERSION, true );
 
 	// Exposer le nonce REST API pour les appels AJAX
@@ -242,6 +243,3 @@ add_filter( 'gettext', function( $translated_text, $text, $domain ) {
     }
     return $translated_text;
 }, 20, 3 );
-
-// Dans functions.php ou ton plugin
-wp_enqueue_style( 'fontawesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css', [], '6.5.1' );

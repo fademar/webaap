@@ -320,13 +320,11 @@
                         "id": ""
                     },
                     "choices": {
-                        "dr": "Directeur·rice de recherche",
-                        "cr": "Chargé·e de recherche",
-                        "pr": "Professeur·e des universités",
-                        "mcf": "Maître·sse de conférences",
-                        "inge": "Ingénieur·e",
-                        "postdoc": "Post-doctorant·e",
-                        "doc": "Doctorant·e"
+                        "enseignant-chercheur": "Enseignant·e-chercheur·se",
+                        "chercheur": "Chercheur·se",
+                        "ingenieur": "Ingénieur·e",
+                        "post-doctorant": "Post-doctorant·e",
+                        "doctorant": "Doctorant·e"
                     },
                     "default_value": false,
                     "return_format": "value",
@@ -506,13 +504,11 @@
                         "id": ""
                     },
                     "choices": {
-                        "dr": "Directeur·rice de recherche",
-                        "cr": "Chargé·e de recherche",
-                        "pr": "Professeur·e des universités",
-                        "mcf": "Maître·sse de conférences",
-                        "inge": "Ingénieur·e",
-                        "postdoc": "Post-doctorant·e",
-                        "doc": "Doctorant·e"
+                        "enseignant-chercheur": "Enseignant·e-chercheur·se",
+                        "chercheur": "Chercheur·se",
+                        "ingenieur": "Ingénieur·e",
+                        "post-doctorant": "Post-doctorant·e",
+                        "doctorant": "Doctorant·e"
                     },
                     "default_value": false,
                     "return_format": "value",
@@ -886,7 +882,7 @@
             "label": "Lieu de l'événement",
             "name": "cand_lieu_event",
             "aria-label": "",
-            "type": "text",
+            "type": "radio",
             "instructions": "",
             "required": 0,
             "conditional_logic": [
@@ -895,6 +891,40 @@
                         "field": "field_69272ad091972",
                         "operator": "==",
                         "value": "58"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "ens": "ENS Paris-Saclay",
+                "autre": "Autre"
+            },
+            "default_value": "",
+            "return_format": "value",
+            "allow_null": 0,
+            "other_choice": 0,
+            "allow_in_bindings": 0,
+            "layout": "vertical",
+            "save_other_choice": 0
+        },
+        {
+            "key": "field_697226be4cb7f",
+            "label": "Autre lieu de l'événement",
+            "name": "cand_autre_lieu",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_695bda061597c",
+                        "operator": "==",
+                        "value": "autre"
                     }
                 ]
             ],
@@ -1357,6 +1387,61 @@
             "append": ""
         },
         {
+            "key": "field_696f75d6acfeb",
+            "label": "Gestion des fonds",
+            "name": "cand_gestion_budget",
+            "aria-label": "",
+            "type": "radio",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "msh": "Je souhaite que les fonds alloués soient gérés par la MSH",
+                "etablissement": "Je souhaite que les fonds alloués soient versés à mon établissement"
+            },
+            "default_value": "",
+            "return_format": "value",
+            "allow_null": 0,
+            "other_choice": 0,
+            "allow_in_bindings": 0,
+            "layout": "vertical",
+            "save_other_choice": 0
+        },
+        {
+            "key": "field_69765a7414f90",
+            "label": "Établissement destinataire des fonds",
+            "name": "cand_etablissement_destinataire_fonds",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_696f75d6acfeb",
+                        "operator": "==",
+                        "value": "etablissement"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_692824239523a",
             "label": "Autres financements",
             "name": "cand_cofinancements",
@@ -1474,6 +1559,27 @@
             "selected": 0
         },
         {
+            "key": "field_697657b39d628",
+            "label": "Eligibilité de la candidature",
+            "name": "cand_eligibilite",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "",
+            "default_value": 0,
+            "allow_in_bindings": 0,
+            "ui": 0,
+            "ui_on_text": "",
+            "ui_off_text": ""
+        },
+        {
             "key": "field_693731eee9a38",
             "label": "RGPD",
             "name": "cand_rgpd",
@@ -1576,27 +1682,6 @@
             "step": "",
             "prepend": "",
             "append": ""
-        },
-        {
-            "key": "field_696f75d6acfeb",
-            "label": "Souhaitez-vous que la MSH gère les fonds attribués ?",
-            "name": "cand_gestion_msh",
-            "aria-label": "",
-            "type": "true_false",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "message": "Oui, je souhaite que les fonds attribués soient directement par la MSH",
-            "default_value": 0,
-            "allow_in_bindings": 0,
-            "ui": 0,
-            "ui_on_text": "",
-            "ui_off_text": ""
         }
     ],
     "location": [
@@ -1618,5 +1703,5 @@
     "description": "",
     "show_in_rest": 0,
     "display_title": "",
-    "modified": 1768912453
+    "modified": 1769364169
 }
