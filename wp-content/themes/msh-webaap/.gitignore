@@ -3,13 +3,13 @@
 /vendor
 
 # Ignore generated JavaScript files:
-*.min.js
+# *.min.js
 
 # Ignore generated CSS files:
-style.css
-style-editor.css
-style-editor-extra.css
-tailwind-intellisense.css
+# style.css
+# style-editor.css
+# style-editor-extra.css
+# tailwind-intellisense.css
 
 # Ignore the generated zip file:
 msh-webaap.zip
