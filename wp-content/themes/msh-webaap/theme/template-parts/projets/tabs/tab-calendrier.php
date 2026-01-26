@@ -10,7 +10,7 @@ if ( $terms && ! is_wp_error( $terms ) ) {
     $ptype = $term->slug;
 }
 
-$date_calendrier_previsionnel = get_field('cand_calendrier_previsionnel');
+$calendrier_previsionnel = get_field('cand_calendrier_previsionnel');
 $date_event = get_field('cand_date_event');
 $duree_event = get_field('cand_duree_event');
 $lieu_event = get_field('cand_lieu_event');
@@ -23,11 +23,11 @@ $seances    = get_field('cand_seances'); // repeater (array)
 
       <div class="mb-8"> 
           <h3 class="text-sm font-bold text-slate-600 uppercase mb-2">
-          Calendrier prévisionnel
+          Calendrier de recherche prévisionnel
           </h3>
           
           <div class="prose prose-slate max-w-none">
-            <?php echo $date_calendrier_previsionnel ? esc_html($calendrier_previsionnel) : '<span class="text-slate-400">—</span>'; ?>
+            <?php echo $calendrier_previsionnel ? esc_html($calendrier_previsionnel) : '<span class="text-slate-400">—</span>'; ?>
           </div>
       </div>
 

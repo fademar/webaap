@@ -22,7 +22,7 @@ function msh_render_notes_module( int $project_id, string $scope ) {
     ] );
     ?>
 
-    <div class="bg-pink-50 border-pink-200 rounded-xl border border-gray-200 p-6 mt-10">
+    <div id="notes-section" class="bg-pink-50/75 border-pink-200/75 rounded-xl border border-gray-200 p-6 mt-10">
         <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
             <i class="fa-solid fa-message"></i>
             Notes et échanges (<?php echo ucfirst($scope); ?>)
@@ -56,7 +56,7 @@ function msh_render_notes_module( int $project_id, string $scope ) {
             <input type="hidden" name="project_id" value="<?php echo esc_attr( $project_id ); ?>">
             <input type="hidden" name="scope" value="<?php echo esc_attr( $scope ); ?>">
             
-            <input type="hidden" name="redirect" value="<?php echo esc_url( add_query_arg('tab', $scope, get_permalink($project_id)) ); ?>">
+            <input type="hidden" name="redirect" value="<?php echo esc_url( add_query_arg('tab', $scope, get_permalink($project_id)) . '#notes-section' ); ?>">
 
             <?php wp_nonce_field( 'mshps_add_project_note' ); ?>
 
@@ -64,8 +64,8 @@ function msh_render_notes_module( int $project_id, string $scope ) {
             <textarea 
                 id="note_content_<?php echo $scope; ?>"
                 name="content" 
-                rows="3" 
-                class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm p-3"
+                rows="5" 
+                class="w-full bg-white rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm p-3"
                 placeholder="Écrire une remarque interne, une décision..."
                 required
             ></textarea>

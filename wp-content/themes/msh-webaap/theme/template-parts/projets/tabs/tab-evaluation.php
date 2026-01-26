@@ -37,10 +37,10 @@ $criteres_config = [
             </p>
         </div>
         
-        <button type="button" data-open-eval-modal 
-                class="flex items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-sm font-bold text-white hover:bg-blue-800 shadow-sm transition-all">
+        <a href="<?php echo esc_url(home_url('/nouvelle-evaluation/?projet_id=' . $project_id)); ?>" 
+           class="flex items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-sm font-bold text-white hover:bg-blue-800 shadow-sm transition-all">
             <i class="fa-solid fa-plus"></i> Nouvelle évaluation
-        </button>
+        </a>
     </div>
 
     <?php if ( $evals_query->have_posts() ) : ?>
@@ -76,12 +76,15 @@ $criteres_config = [
                     <div class="grow min-w-0"> <div class="flex justify-between items-start mb-2">
                             <div>
                                 <h4 class="text-lg font-bold text-slate-900">
-                                    <?php echo esc_html($nom.' '.$prenom ?: 'Évaluateur inconnu'); ?>
+                                    <?php echo esc_html($prenom.' '.$nom ?: 'Évaluateur inconnu'); ?>
                                 </h4>
                             </div>
                             <div class="flex items-center gap-3">
-                                <a href="<?php echo get_edit_post_link($eval_id); ?>" target="_blank" class="p-2 text-slate-400 hover:text-blue-600 transition-colors" title="Modifier">
-                                    <i class="fa-solid fa-pen text-lg"></i>
+                                <a href="<?php echo get_permalink($eval_id); ?>" 
+                                   target="_blank" 
+                                   class="p-2 text-slate-400 hover:text-blue-600 transition-colors" 
+                                   title="Voir les détails">
+                                    <i class="fa-solid fa-eye text-lg"></i>
                                 </a>
                             </div>
                         </div>
@@ -115,33 +118,6 @@ $criteres_config = [
 
 </section>
 
-
-<div id="eval-modal" class="fixed inset-0 z-50 hidden" aria-hidden="true">
-    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" data-close-eval-modal></div>
-    
-    <div class="relative mx-auto mt-2 w-full max-w-6xl h-[98vh] flex flex-col bg-white shadow-2xl rounded-xl overflow-hidden">
-        
-        <!-- Header fixe -->
-        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50 shrink-0">
-            <div>
-                <h3 class="text-lg font-bold text-slate-800">Saisie d'évaluation</h3>
-                <p class="text-xs text-slate-500 mt-0.5">Remplissez les critères d'évaluation ci-dessous</p>
-            </div>
-            <button type="button" data-close-eval-modal class="text-slate-400 hover:text-slate-700 transition-colors">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
-        </div>
-        
-        <!-- Body scrollable avec padding -->
-        <div class="flex-1 overflow-y-auto px-6 py-4 lg:px-8 lg:py-4 bg-white">
-            <?php echo do_shortcode('[ws_form id="11"]'); ?>
-        </div>
-        
-    </div>
-</div>
-
 <script>
 // Fonction pour étendre/réduire le texte
 function toggleComment(id, btn) {
@@ -158,29 +134,4 @@ function toggleComment(id, btn) {
         span.textContent = 'Lire la suite';
     }
 }
-
-// Gestion Modale
-document.addEventListener('DOMContentLoaded', function() {
-    const modal = document.getElementById('eval-modal');
-    const openBtns = document.querySelectorAll('[data-open-eval-modal]');
-    const closeBtns = document.querySelectorAll('[data-close-eval-modal]');
-    const body = document.body;
-
-    function toggleModal(show) {
-        if(show) {
-            modal.classList.remove('hidden');
-            body.style.overflow = 'hidden'; 
-        } else {
-            modal.classList.add('hidden');
-            body.style.overflow = '';
-        }
-    }
-
-    openBtns.forEach(btn => btn.addEventListener('click', (e) => { e.preventDefault(); toggleModal(true); }));
-    closeBtns.forEach(btn => btn.addEventListener('click', (e) => { e.preventDefault(); toggleModal(false); }));
-    
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !modal.classList.contains('hidden')) toggleModal(false);
-    });
-});
 </script>

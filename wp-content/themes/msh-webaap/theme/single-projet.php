@@ -46,6 +46,17 @@ while ( have_posts() ) : the_post();
     $current_status_key = get_post_status( get_the_ID() );
     $current_status_label = isset($statuses[$current_status_key]) ? $statuses[$current_status_key] : $current_status_key;
 
+    // Création de l'URL sécurisée pour le téléchargement
+    $url_telechargement = add_query_arg(
+        [
+            'action'     => 'mshps_handle_download_cvs',       // Le nom de l'action dans le backend
+            'projet_id' => get_the_ID(),                     // ou $project_id selon ta variable
+            'nonce'      => wp_create_nonce('msh_download_cvs_' . get_the_ID())
+        ],
+        admin_url('admin-post.php')
+    );
+
+
 ?>
 
 
@@ -123,6 +134,10 @@ while ( have_posts() ) : the_post();
                       Exporter (PDF)
                   </span>
               </a>
+              <a href="<?php echo esc_url($url_telechargement); ?>" 
+                class="rounded-lg border text-center px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 cursor-pointer inline-flex items-center gap-2 text-decoration-none">
+                    Télécharger les pièces jointes
+                </a>
               <?php
               // Récupération de tous les emails de l'équipe
               $all_emails = [];

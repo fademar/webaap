@@ -226,7 +226,7 @@ function mshps_aap_add_project_note(): void {
 	$scope      = isset( $_POST['scope'] ) ? sanitize_key( (string) wp_unslash( $_POST['scope'] ) ) : '';
 	$content    = isset( $_POST['content'] ) ? trim( (string) wp_unslash( $_POST['content'] ) ) : '';
 
-	$allowed_scopes = [ 'projet', 'gestion', 'evaluation', 'budget', 'communication', 'edition', 'plateformes' ];
+	$allowed_scopes = [ 'presentation', 'calendrier', 'budget', 'communication', 'edition', 'plateformes', 'evaluation', 'historique' ];
 	if ( ! $project_id || get_post_type( $project_id ) !== 'projet' ) {
 		wp_die( 'Projet invalide.', 400 );
 	}
@@ -247,6 +247,7 @@ function mshps_aap_add_project_note(): void {
 
 	if ( $comment_id && ! is_wp_error( $comment_id ) ) {
 		add_comment_meta( (int) $comment_id, 'scope', $scope, true );
+        mshps_log_projet_event( $project_id, 'comment_add', 'Note ajoutée dans l\'onglet ' . $scope);
 	}
 
 	mshps_aap_redirect_back();
@@ -281,6 +282,8 @@ function mshps_aap_update_project_status(): void {
 		'ID'          => $project_id,
 		'post_status' => $new_status,
 	] );
+
+	mshps_log_projet_event( $project_id, 'status_change', 'Statut modifié', [ 'old_status' => $old_status, 'new_status' => $new_status ] );
 
 	mshps_aap_redirect_back();
 }
@@ -335,7 +338,7 @@ function mshps_aap_update_project_budget(): void {
     $budget_field_key = 'field_6940114908e06';
     update_field( $budget_field_key, $amount, $project_id );
     
-
+    mshps_log_projet_event( $project_id, 'budget', 'Budget accordé modifié', [ 'amount' => $amount ] );
     // 6. Redirection
     mshps_aap_redirect_back();
 }
@@ -1080,15 +1083,91 @@ function mshps_render_printable_dossier() {
         <meta charset="UTF-8">
         <title>Dossier_<?php echo $project_id; ?>_<?php echo sanitize_title($project->post_title); ?></title>
         <style>
-            /* CSS POUR L'IMPRESSION (A4 Zéro Marge + Padding body) */
+            /* CSS POUR L'IMPRESSION (A4 avec marges) */
             @media print {
-                @page { margin: 0; size: A4; }
-                body { margin: 0; padding: 2cm; width: auto; box-shadow: none; }
-                .no-print, button { display: none !important; }
-                a { text-decoration: none; color: #000; }
-                /* On évite de couper les tableaux au milieu d'une ligne */
-                tr { page-break-inside: avoid; }
-                h2, h3 { page-break-after: avoid; }
+                @page { 
+                    margin: 1.5cm; 
+                    size: A4; 
+                }
+                
+                body { 
+                    margin: 0; 
+                    padding: 0; 
+                    width: auto; 
+                    box-shadow: none; 
+                }
+                
+                /* Masquer les éléments non imprimables */
+                .no-print, 
+                button, 
+                .print-btn { 
+                    display: none !important; 
+                }
+                
+                /* Liens */
+                a { 
+                    text-decoration: none; 
+                    color: #000; 
+                }
+                
+                /* CONTRÔLE DES SAUTS DE PAGE */
+                
+                /* Éviter absolument de couper ces éléments */
+                h1, h2, h3, 
+                header, 
+                .props-grid,
+                .prop-item {
+                    break-inside: avoid !important;
+                    page-break-inside: avoid !important;
+                }
+                
+                /* Titres : toujours garder avec le contenu qui suit */
+                h1, h2, h3 {
+                    break-after: avoid !important;
+                    page-break-after: avoid !important;
+                }
+                
+                /* Tableaux : répéter les en-têtes mais éviter de couper les lignes */
+                table {
+                    break-inside: auto;
+                    page-break-inside: auto;
+                }
+                
+                thead {
+                    display: table-header-group;
+                }
+                
+                tbody {
+                    break-inside: auto;
+                    page-break-inside: auto;
+                }
+                
+                tr {
+                    break-inside: avoid !important;
+                    page-break-inside: avoid !important;
+                }
+                
+                /* Sections scientifiques courtes : éviter les coupures */
+                .section-scientifique {
+                    break-inside: avoid;
+                    page-break-inside: avoid;
+                }
+                
+                /* Si section trop longue (>15 lignes), permettre la coupure propre */
+                .content-box {
+                    orphans: 3;
+                    widows: 3;
+                }
+                
+                .content-box p {
+                    orphans: 2;
+                    widows: 2;
+                }
+                
+                /* Espacement des sections majeures */
+                h2 {
+                    margin-top: 30px;
+                }
             }
 
             /* CSS VISUEL (ÉCRAN) */
@@ -1181,6 +1260,7 @@ function mshps_render_printable_dossier() {
                         <th>Nom</th>
                         <th>Laboratoire</th>
                         <th>Établissement</th>
+                        <th>Statut</th>
                         <th>Email</th>
                     </tr>
                 </thead>
@@ -1192,6 +1272,7 @@ function mshps_render_printable_dossier() {
                         </td>
                         <td><?php echo esc_html($r['laboratoire'] ?? ''); ?></td>
                         <td><?php echo esc_html($r['etablissement'] ?? ''); ?></td>
+                        <td><?php echo esc_html($r['statut'] ?? ''); ?></td>
                         <td><?php echo esc_html($r['email'] ?? ''); ?></td>
                     </tr>
                     <?php endforeach; ?>
@@ -1228,7 +1309,7 @@ function mshps_render_printable_dossier() {
             $content = get_field( $field_name, $project_id );
             if ( ! $content ) continue; 
             ?>
-            <div style="page-break-inside: avoid;">
+            <div class="section-scientifique">
                 <h3><?php echo esc_html( $label ); ?></h3>
                 <div class="content-box">
                     <?php echo wpautop( wp_kses_post( $content ) ); ?>
@@ -1240,10 +1321,12 @@ function mshps_render_printable_dossier() {
 
         <?php 
         // Récupération des champs calendrier
-        $date_debut = get_field('cand_date_debut', $project_id);
-        $date_fin   = get_field('cand_date_fin', $project_id);
+        $calendrier_previsionnel = get_field('cand_calendrier_previsionnel', $project_id);
         $date_event = get_field('cand_date_event', $project_id);
+        $duree_event = get_field('cand_duree_event', $project_id);
         $lieu_event = get_field('cand_lieu_event', $project_id);
+        $autre_lieu = get_field('cand_autre_lieu', $project_id);
+        $programme_previsionnel = get_field('cand_prog_previ', $project_id);
         $seances    = get_field('cand_seances', $project_id);
 
         // Helper pour formatage date
@@ -1252,17 +1335,11 @@ function mshps_render_printable_dossier() {
         };
         ?>
 
-        <?php if ( in_array($ptype_slug, ['em', 'ma'], true) ): ?>
-            <div class="props-grid">
-                <div class="prop-item">
-                    <label>Date de début</label>
-                    <span><?php echo esc_html( $fmt_date($date_debut) ); ?></span>
+        <?php if ( in_array($ptype_slug, ['em', 'ma'], true) ): ?>        
+                <h3>Calendrier de recherche prévisionnel</h3>
+                <div class="content-box">
+                    <?php echo wpautop( wp_kses_post( $calendrier_previsionnel ) ); ?>
                 </div>
-                <div class="prop-item">
-                    <label>Date de fin</label>
-                    <span><?php echo esc_html( $date_fin ); ?></span>
-                </div>
-            </div>
 
         <?php elseif ( $ptype_slug === 'ws' ): ?>
             <div class="props-grid">
@@ -1270,9 +1347,17 @@ function mshps_render_printable_dossier() {
                     <label>Date de l'événement</label>
                     <span><?php echo esc_html( $fmt_date($date_event) ); ?></span>
                 </div>
+                <div class="prop-item">
+                    <label>Durée de l'événement</label>
+                    <span><?php echo esc_html( $duree_event ); ?></span>
+                </div>
                 <div class="prop-item" style="grid-column: span 2;">
                     <label>Lieu</label>
-                    <span><?php echo esc_html( $lieu_event ); ?></span>
+                    <span><?php echo esc_html( $lieu_event === 'autre' ? $autre_lieu : 'ENS Paris-Saclay' ); ?></span>
+                </div>
+                <div class="prop-item">
+                    <label>Programme prévisionnel</label>
+                    <span><?php echo esc_html( $programme_previsionnel ); ?></span>
                 </div>
             </div>
 
@@ -1394,70 +1479,6 @@ function mshps_render_printable_dossier() {
     </body>
     </html>
     <?php
-    exit;
-}
-
-/**
- * Enregistrement d'une évaluation (CPT)
- */
-add_action( 'admin_post_mshps_add_evaluation', 'mshps_handle_add_evaluation' );
-
-function mshps_handle_add_evaluation() {
-    // 1. Sécurité
-    check_admin_referer( 'mshps_add_eval_action' );
-    if ( ! current_user_can('edit_posts') ) wp_die('Accès interdit');
-
-    $project_id = (int) $_POST['project_id'];
-    $redirect   = $_POST['redirect'];
-    
-    // Config identique à la modale
-    $criteres_keys = ['interinstit', 'interdisc', 'novateur', 'objectifs', 'science', 'equipe', 'perspectives', 'budget'];
-
-    // 2. Création du Post Evaluation
-    $nom = sanitize_text_field($_POST['evaluateur_nom']);
-    $prenom = sanitize_text_field($_POST['evaluateur_prenom']);
-    $email = sanitize_email($_POST['evaluateur_email']);
-    $institution = sanitize_text_field($_POST['evaluateur_institution']);
-    $note_generale = sanitize_text_field($_POST['note_generale']);
-    $commentaire_general = sanitize_text_field($_POST['commentaire_general']);
-    
-    // Titre ex: "Éval B - Angela Marques"
-    $title = sprintf('Éval %s - %s %s', $note_generale, $nom, $prenom);
-
-    $eval_id = wp_insert_post([
-        'post_type'    => 'evaluation',
-        'post_title'   => $title,
-        'post_status'  => 'publish',
-    ]);
-
-    if ( $eval_id ) {
-        // 3. Sauvegarde Métas
-        update_field( 'eval_projet_id', $project_id, $eval_id );
-        
-        // Infos Evaluateur
-        update_field( 'evaluateur_nom', $nom, $eval_id );
-        update_field( 'evaluateur_prenom', $prenom, $eval_id );
-        update_field( 'evaluateur_email', $email, $eval_id );
-        update_field( 'evaluateur_institution', $institution, $eval_id );
-
-        // Boucle sur les critères
-        foreach ($criteres_keys as $key) {
-            if (isset($_POST["criteres_{$key}_note"])) {
-                update_field( "criteres_{$key}_note", sanitize_text_field($_POST["criteres_{$key}_note"]), $eval_id );
-            }
-            if (isset($_POST["criteres_{$key}_comment"])) {
-                // wp_kses_post autorise le gras/italique si copié depuis word/pdf
-                update_field( "criteres_{$key}_comment", wp_kses_post($_POST["criteres_{$key}_comment"]), $eval_id );
-            }
-        }
-
-        // Synthèse
-        update_field( 'note_generale', $note_generale, $eval_id );
-        update_field( 'commentaire_general', $commentaire_general, $eval_id );
-
-    }
-
-    wp_redirect( $redirect );
     exit;
 }
 
@@ -1587,5 +1608,308 @@ function msh_handle_create_wave_submission() {
 
     // 6. REDIRECTION SUCCÈS
     wp_redirect( add_query_arg( 'msh_msg', 'success', $redirect_url ) );
+    exit;
+}
+
+/**
+ * Génère automatiquement le titre des évaluations
+ * Format : "Référence projet - Prénom Nom"
+ * 
+ * Se déclenche après la création/mise à jour d'une évaluation via WS Form
+ */
+add_action('save_post_evaluation', 'mshps_auto_generate_evaluation_title', 20, 3);
+
+function mshps_auto_generate_evaluation_title($post_id, $post, $update) {
+    // Éviter les boucles infinies et les révisions
+    if (wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) {
+        return;
+    }
+    
+    // Éviter de se déclencher pendant notre propre mise à jour
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+    
+    // Récupérer les données nécessaires
+    $projet_id = get_field('eval_projet_id', $post_id);
+    $prenom = get_field('evaluateur_prenom', $post_id);
+    $nom = get_field('evaluateur_nom', $post_id);
+    
+    // Si on n'a pas les données minimales, on ne fait rien
+    if (!$prenom || !$nom) {
+        return;
+    }
+    
+    // Récupérer la référence du projet
+    $ref_projet = '';
+    if ($projet_id) {
+        $ref_projet = get_field('proj_ref', $projet_id);
+    }
+    
+    // Générer le titre
+    $new_title = '';
+    if ($ref_projet) {
+        $new_title = $ref_projet . ' - ' . $prenom . ' ' . $nom;
+    } else {
+        $new_title = 'Évaluation - ' . $prenom . ' ' . $nom;
+    }
+    
+    // Mettre à jour le titre seulement s'il est différent (éviter boucle)
+    if ($post->post_title !== $new_title) {
+        // Retirer temporairement le hook pour éviter la boucle
+        remove_action('save_post_evaluation', 'mshps_auto_generate_evaluation_title', 20);
+        
+        wp_update_post([
+            'ID' => $post_id,
+            'post_title' => $new_title
+        ]);
+        
+        // Remettre le hook
+        add_action('save_post_evaluation', 'mshps_auto_generate_evaluation_title', 20, 3);
+    }
+}
+
+/**
+ * Logger la création d'une évaluation dans l'historique du projet
+ */
+add_action('save_post_evaluation', 'mshps_log_evaluation_creation', 30, 3);
+function mshps_log_evaluation_creation($post_id, $post, $update) {
+    // Logger UNIQUEMENT si c'est une nouvelle création (pas une mise à jour)
+    if ($update) {
+        return;
+    }
+    
+    // Éviter les autosaves et révisions
+    if (wp_is_post_autosave($post_id) || wp_is_post_revision($post_id)) {
+        return;
+    }
+    
+    $projet_id = get_post_meta($post_id, 'eval_projet_id', true);
+    if ($projet_id && function_exists('mshps_log_projet_event')) {
+        mshps_log_projet_event($projet_id, 'evaluation_add', 'Nouvelle évaluation ajoutée');
+    }
+}
+
+/**
+ * Logger la modification d'une évaluation dans l'historique du projet
+ */
+add_action('save_post_evaluation', 'mshps_log_evaluation_update', 30, 3);
+function mshps_log_evaluation_update($post_id, $post, $update) {
+    // Logger UNIQUEMENT si c'est une mise à jour (pas une création)
+    if (!$update) {
+        return;
+    }
+    
+    // Éviter les autosaves et révisions
+    if (wp_is_post_autosave($post_id) || wp_is_post_revision($post_id)) {
+        return;
+    }
+    
+    // Éviter les logs multiples en utilisant un flag temporaire
+    $flag_key = 'mshps_eval_update_logged_' . $post_id;
+    if (get_transient($flag_key)) {
+        return; // Déjà loggé dans cette requête
+    }
+    
+    $projet_id = get_post_meta($post_id, 'eval_projet_id', true);
+    if ($projet_id && function_exists('mshps_log_projet_event')) {
+        mshps_log_projet_event($projet_id, 'evaluation_update', 'Évaluation modifiée');
+        // Marquer comme loggé pour 30 secondes (le temps de la requête)
+        set_transient($flag_key, true, 30);
+    }
+}
+
+/**
+ * Logger la suppression d'une évaluation dans l'historique du projet
+ */
+add_action('before_delete_post', 'mshps_log_evaluation_deletion', 10, 2);
+function mshps_log_evaluation_deletion($post_id, $post) {
+    if (!$post || $post->post_type !== 'evaluation') {
+        return;
+    }
+    
+    $projet_id = get_post_meta($post_id, 'eval_projet_id', true);
+    if ($projet_id && function_exists('mshps_log_projet_event')) {
+        mshps_log_projet_event($projet_id, 'evaluation_delete', 'Évaluation supprimée');
+    }
+}
+
+/**
+ * Handler pour la suppression d'une évaluation
+ * Accessible via admin-post.php
+ */
+add_action('admin_post_delete_evaluation', 'mshps_delete_evaluation');
+function mshps_delete_evaluation() {
+    // Vérifier que l'utilisateur est connecté et a les droits
+    if (!is_user_logged_in() || !current_user_can('edit_others_posts')) {
+        wp_die('Vous n\'avez pas les droits pour effectuer cette action.');
+    }
+    
+    // Récupérer les paramètres
+    $eval_id = isset($_POST['eval_id']) ? intval($_POST['eval_id']) : 0;
+    $projet_id = isset($_POST['projet_id']) ? intval($_POST['projet_id']) : 0;
+    
+    // Vérifier le nonce
+    if (!isset($_POST['delete_eval_nonce']) || !wp_verify_nonce($_POST['delete_eval_nonce'], 'delete_evaluation_' . $eval_id)) {
+        wp_die('Erreur de sécurité. Veuillez réessayer.');
+    }
+    
+    // Vérifier que l'évaluation existe
+    if (!$eval_id || get_post_type($eval_id) !== 'evaluation') {
+        wp_die('Évaluation introuvable.');
+    }
+    
+    // Supprimer l'évaluation (suppression définitive)
+    $deleted = wp_delete_post($eval_id, true);
+    
+    if (!$deleted) {
+        wp_die('Erreur lors de la suppression de l\'évaluation.');
+    }
+    
+    // Rediriger vers le projet (onglet évaluation)
+    $redirect_url = $projet_id 
+        ? add_query_arg('tab', 'evaluation', get_permalink($projet_id))
+        : home_url('/dashboard/');
+    
+    wp_safe_redirect($redirect_url);
+    exit;
+}
+
+
+add_action('admin_post_mshps_handle_download_cvs', 'mshps_handle_download_cvs');
+function mshps_handle_download_cvs() {
+    // 1. SÉCURITÉ
+    if (!isset($_GET['projet_id']) || !isset($_GET['nonce'])) {
+        wp_die('Requête invalide.');
+    }
+    
+    $projet_id = intval($_GET['projet_id']);
+    
+    // Vérification du nonce spécifique à ce projet
+    if (!wp_verify_nonce($_GET['nonce'], 'msh_download_cvs_' . $projet_id)) {
+        wp_die('Lien expiré ou invalide.');
+    }
+
+    // Vérification des droits
+    if (!current_user_can('edit_others_posts')) {
+        wp_die('Accès refusé.');
+    }
+
+    // Initialisation
+    $files_to_zip = [];
+    $compteur = 1;
+
+    // ---------------------------------------------------------
+    // A. RÉCUPÉRATION DU CV DU PORTEUR PRINCIPAL
+    // ---------------------------------------------------------
+    
+    // ACF retourne un tableau (Array) car tu as choisi "File Array"
+    $cv_porteur = get_field('proj_porteur_cv', $projet_id);
+
+    if ( $cv_porteur && isset($cv_porteur['ID']) ) {
+        // On récupère le chemin absolu sur le disque (ex: /var/www/html/wp-content/...)
+        $path = get_attached_file( $cv_porteur['ID'] );
+        
+        if ( file_exists($path) ) {
+            // On renomme le fichier pour que ce soit clair dans le ZIP
+            // On garde l'extension d'origine (.pdf, .docx...)
+            $ext = pathinfo($path, PATHINFO_EXTENSION);
+            $nom_porteur = get_field('proj_porteur_nom', $projet_id);
+            $safe_name = sanitize_file_name($nom_porteur);
+            if(empty($safe_name)) $safe_name = "Porteur";
+            $files_to_zip[] = [
+                'path' => $path,
+                'name' => '0-CV-' . $safe_name . '.' . $ext // Nom dans le ZIP
+            ];
+        }
+    }
+
+    // ---------------------------------------------------------
+    // B. RÉCUPÉRATION DES CO-PORTEURS (REPEATER)
+    // ---------------------------------------------------------
+    
+    // Remplace 'co_porteurs' par le slug de ton champ Répéteur
+    if ( have_rows('proj_porteurs', $projet_id) ) {
+        while ( have_rows('proj_porteurs', $projet_id) ) {
+            the_row();
+
+            // Remplace 'cv' par le nom du sous-champ fichier dans le répéteur
+            $cv_coporteur = get_sub_field('cv');
+            // Remplace 'nom' par le sous-champ nom (pour renommer le fichier)
+            $nom_coporteur = get_sub_field('nom'); 
+            
+            // Vérification que le champ n'est pas vide et contient bien un ID
+            if ( $cv_coporteur && isset($cv_coporteur['ID']) ) {
+                $path = get_attached_file( $cv_coporteur['ID'] );
+                
+                if ( file_exists($path) ) {
+                    $ext = pathinfo($path, PATHINFO_EXTENSION);
+                    
+                    // Nettoyage du nom pour éviter les caractères spéciaux dans le ZIP
+                    $safe_name = sanitize_file_name($nom_coporteur);
+                    if(empty($safe_name)) $safe_name = "Coporteur-{$compteur}";
+
+                    $files_to_zip[] = [
+                        'path' => $path,
+                        'name' => $compteur . '-CV-' . $safe_name . '.' . $ext
+                    ];
+                    $compteur++;
+                }
+            }
+        }
+    }
+
+    // ---------------------------------------------------------
+    // C. CRÉATION DU ZIP
+    // ---------------------------------------------------------
+    
+    if (empty($files_to_zip)) {
+        wp_die('Aucun CV trouvé (ni porteur, ni co-porteurs).');
+    }
+    $reference = get_field('proj_ref', $projet_id);
+    $zip = new ZipArchive();
+    $zip_name = 'Projet-' . $reference . '-CVs.zip';
+    $tmp_file = tempnam(sys_get_temp_dir(), 'msh_cv_zip');
+
+    if ($zip->open($tmp_file, ZipArchive::CREATE) !== TRUE) {
+        wp_die('Erreur création ZIP.');
+    }
+
+    foreach ($files_to_zip as $file) {
+        // addFile(Chemin Réel, Nom dans le ZIP)
+        $zip->addFile($file['path'], $file['name']);
+    }
+
+    $zip->close();
+
+    // 1. On vide le tampon de sortie système pour virer les espaces/erreurs qui traînent
+    if (ob_get_length()) {
+        ob_end_clean(); 
+    }
+    
+    // 2. Désactivation de la compression gzip (souvent active sur les hébergeurs comme Hostinger)
+    // Si le serveur compresse le ZIP déjà compressé, ça corrompt le fichier.
+    if(ini_get('zlib.output_compression')) {
+        ini_set('zlib.output_compression', 'Off');
+    }
+
+    // Log & Download headers...
+    if (function_exists('msh_add_history_log')) {
+        msh_add_history_log($project_id, "Téléchargement des CVs (ZIP)", 'file');
+    }
+
+    header('Pragma: public');
+    header('Expires: 0');
+    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+    header('Cache-Control: private', false);
+    header('Content-Type: application/zip');
+    header('Content-Disposition: attachment; filename="' . $zip_name . '"');
+    header('Content-Transfer-Encoding: binary');
+    header('Content-Length: ' . filesize($tmp_file));
+    
+    readfile($tmp_file);
+    
+    // On supprime le fichier temporaire
+    unlink($tmp_file);
     exit;
 }
