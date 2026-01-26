@@ -168,18 +168,26 @@ $projet_id = isset( $_GET['projet_id'] ) ? (int) $_GET['projet_id'] : 0;
                 <table id="mshps-projets-table" class="display w-full">
                     <thead>
                         <tr>
-                            <th>Statut</th>
-                            <th>Référence</th>
+                            <th class="whitespace-nowrap">Statut</th>
+                            <th class="whitespace-nowrap">Référence</th>
                             <th>Titre</th>
                             <th>Porteur</th>
-                            <th>Date de dépôt</th>
-                            <th>Services</th>
-                            <th>Action</th>
+                            <th class="whitespace-nowrap">Date de dépôt</th>
+                            <th class="whitespace-nowrap">Services</th>
+                            <th class="whitespace-nowrap">Action</th>
                         </tr>
                     </thead>
                 </table>
             </div>
         </section>
+
+        <style>
+        /* Assure que les cellules avec whitespace-nowrap ne retournent pas à la ligne */
+        #mshps-projets-table td.whitespace-nowrap,
+        #mshps-projets-table th.whitespace-nowrap {
+            white-space: nowrap !important;
+        }
+        </style>
 
         <script>
         window.mshpsDashboard = {
@@ -213,13 +221,19 @@ $projet_id = isset( $_GET['projet_id'] ) ? (int) $_GET['projet_id'] : 0;
                     }
                 },
                 columns: [
-                    { data: 'status', orderable: true, searchable: false },
-                    { data: 'ref', orderable: true },
-                    { data: 'title', orderable: true },
-                    { data: 'owner', orderable: true, searchable: true },
-                    { data: 'date_depot', orderable: true, searchable: false },
-                    { data: 'needs', orderable: false, searchable: false },
-                    { data: 'actions', orderable: false, searchable: false }
+                    { data: 'status', orderable: true, searchable: false, width: '12%' },
+                    { data: 'ref', orderable: true, width: '12%' },
+                    { data: 'title', orderable: true, width: '25%' },
+                    { data: 'owner', orderable: true, searchable: true, width: '15%' },
+                    { data: 'date_depot', orderable: true, searchable: false, width: '12%' },
+                    { data: 'needs', orderable: false, searchable: false, width: '14%' },
+                    { data: 'actions', orderable: false, searchable: false, width: '10%' }
+                ],
+                columnDefs: [
+                    {
+                        targets: [0, 1, 4, 5, 6], // Statut, Référence, Date, Services, Actions
+                        className: 'whitespace-nowrap'
+                    }
                 ],
                 language: {
                     url: 'https://cdn.datatables.net/plug-ins/1.13.8/i18n/fr-FR.json'

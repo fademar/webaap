@@ -55,10 +55,10 @@ $submitted_projects = new WP_Query($args);
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Projet</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Référence</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
+                            <th class="w-3/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Projet</th>
+                            <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap">Type</th>
+                            <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap">Référence</th>
+                            <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap">Statut</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 bg-white">
@@ -72,12 +72,12 @@ $submitted_projects = new WP_Query($args);
                             $type_name = !empty($types) && !is_wp_error($types) ? $types[0]->name : '—';
                         ?>
                         <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4">
+                            <td class="w-2/5 px-6 py-4">
                                 <div class="font-medium text-sm text-gray-900"><?php the_title(); ?></div>
                             </td>
-                            <td class="px-6 py-4 text-xs text-gray-500"><?php echo esc_html($type_name); ?></td>
-                            <td class="px-6 py-4 text-xs text-gray-500"><?php echo esc_html(($ref) ? $ref : '—'); ?></td>
-                            <td class="px-6 py-4">
+                            <td class="w-1/6 px-6 py-4 text-xs text-gray-500 whitespace-nowrap"><?php echo esc_html($type_name); ?></td>
+                            <td class="w-1/5 px-6 py-4 text-xs text-gray-500 whitespace-nowrap"><?php echo esc_html(($ref) ? $ref : '—'); ?></td>
+                            <td class="w-1/5 px-6 py-4 whitespace-nowrap">
                                 <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
                                     <?php echo esc_html($status_label); ?>
                                 </span>

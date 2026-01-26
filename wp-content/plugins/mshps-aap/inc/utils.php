@@ -769,6 +769,13 @@ add_action('wsf_submit_update', 'mshps_create_keywords_on_draft_save', 10, 1);
 function mshps_create_keywords_on_draft_save($submit) {
     global $wpdb;
     
+    // IMPORTANT : Ne traiter que les brouillons, pas les soumissions finales
+    // Sinon WS Form va créer les termes une première fois ici, puis les associer
+    // une deuxième fois via son action Post, créant des doublons
+    if ($submit->status !== 'draft') {
+        return;
+    }
+    
     // Utiliser la constante pour l'ID du champ mots-clés
     $field_keywords_id = defined( 'MSHPS_WSFORM_FIELD_KEYWORDS' ) ? MSHPS_WSFORM_FIELD_KEYWORDS : 232;
 

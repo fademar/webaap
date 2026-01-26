@@ -2032,11 +2032,23 @@ form[data-id="9"] fieldset.wsf-section {
 .w-1\/2 {
   width: calc(1/2 * 100%);
 }
+.w-1\/5 {
+  width: calc(1/5 * 100%);
+}
+.w-1\/6 {
+  width: calc(1/6 * 100%);
+}
 .w-2 {
   width: calc(var(--spacing) * 2);
 }
+.w-2\/5 {
+  width: calc(2/5 * 100%);
+}
 .w-3 {
   width: calc(var(--spacing) * 3);
+}
+.w-3\/6 {
+  width: calc(3/6 * 100%);
 }
 .w-5 {
   width: calc(var(--spacing) * 5);
