@@ -48,11 +48,12 @@ function mshps_aap_generate_reference( int $post_id ): string {
 
     // 3) Compter combien de projets ont DÉJÀ une référence pour ce couple vague+type
     //    On se contente de regarder le champ meta ACF proj_ref.
+    //    IMPORTANT : On exclut les projets en corbeille pour que la suppression remette bien à zéro le compteur.
     $q = new WP_Query( [
         'post_type'      => 'projet',
         'posts_per_page' => -1,
         'fields'         => 'ids',
-        'post_status'    => 'any',
+        'post_status'    => ['projet-depose', 'projet-instruction', 'projet-evaluation', 'projet-labellise', 'projet-en-cours', 'projet-non-retenu', 'projet-cloture', 'publish'],
         'post__not_in'   => [ $post_id ], // par sécurité, même si le projet n’a pas encore de ref
         'tax_query'      => [
             'relation' => 'AND',
