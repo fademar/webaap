@@ -10,10 +10,11 @@ if ( $terms && ! is_wp_error( $terms ) ) {
     $ptype = $term->slug;
 }
 
-$date_debut = get_field('cand_date_debut');
-$date_fin   = get_field('cand_date_fin');
+$date_calendrier_previsionnel = get_field('cand_calendrier_previsionnel');
 $date_event = get_field('cand_date_event');
+$duree_event = get_field('cand_duree_event');
 $lieu_event = get_field('cand_lieu_event');
+$autre_lieu = get_field('cand_autre_lieu');
 $seances    = get_field('cand_seances'); // repeater (array)
 ?>
 
@@ -22,21 +23,11 @@ $seances    = get_field('cand_seances'); // repeater (array)
 
       <div class="mb-8"> 
           <h3 class="text-sm font-bold text-slate-600 uppercase mb-2">
-          Date de début
+          Calendrier prévisionnel
           </h3>
           
           <div class="prose prose-slate max-w-none">
-            <?php echo $date_debut ? esc_html(date_format(date_create($date_debut), 'd/m/Y')) : '<span class="text-slate-400">—</span>'; ?>
-          </div>
-      </div>
-
-      <div class="mb-8"> 
-          <h3 class="text-sm font-bold text-slate-600 uppercase mb-2">
-          Date de fin
-          </h3>
-          
-          <div class="prose prose-slate max-w-none">
-            <?php echo $date_fin ? esc_html($date_fin) : '<span class="text-slate-400">—</span>'; ?>
+            <?php echo $date_calendrier_previsionnel ? esc_html($calendrier_previsionnel) : '<span class="text-slate-400">—</span>'; ?>
           </div>
       </div>
 
@@ -59,6 +50,10 @@ $seances    = get_field('cand_seances'); // repeater (array)
           <div class="prose prose-slate max-w-none">
             <?php echo $lieu_event ? esc_html($lieu_event) : '<span class="text-slate-400">—</span>'; ?>
           </div>
+
+          <?php if ($autre_lieu): ?>
+            <div class="text-slate-600">Autre lieu : <?php echo esc_html($autre_lieu); ?></div>
+          <?php endif; ?>
       </div>
 
     <?php elseif ($ptype === 'se'): ?>
