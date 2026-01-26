@@ -48,7 +48,7 @@ $seances    = get_field('cand_seances'); // repeater (array)
           </h3>
           
           <div class="prose prose-slate max-w-none">
-            <?php echo $lieu_event ? esc_html($lieu_event) : '<span class="text-slate-400">—</span>'; ?>
+            <?php echo $lieu_event === 'autre' ? esc_html($autre_lieu) : '<span class="text-slate-400">ENS</span>'; ?>
           </div>
 
           <?php if ($autre_lieu): ?>
