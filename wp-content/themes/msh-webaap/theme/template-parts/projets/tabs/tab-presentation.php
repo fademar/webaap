@@ -39,6 +39,7 @@ if ((int) get_field('cand_plateformes') === 1) {
      'nom'          => $porteur['nom'] ?? '',
      'prenom'       => $porteur['prenom'] ?? '',
      'email'        => $porteur['email'] ?? '',
+     'statut'       => $porteur['statut'] ?? '',
      'laboratoire'  => $porteur['laboratoire'] ?? '',
      'etablissement'=> $porteur['etablissement'] ?? '',
      'cv_pdf'       => $porteur['cv'] ?? null, // file
@@ -54,6 +55,7 @@ if ((int) get_field('cand_plateformes') === 1) {
        'nom'          => $p['nom'] ?? '',
        'prenom'       => $p['prenom'] ?? '',
        'email'        => $p['email'] ?? '',
+       'statut'       => $p['statut'] ?? '',
        'laboratoire'  => $p['laboratoire'] ?? '',
        'etablissement'=> $p['etablissement'] ?? '',
        'cv_pdf'       => $p['cv'] ?? null,
@@ -137,6 +139,7 @@ if ((int) get_field('cand_plateformes') === 1) {
                         <th scope="col" class="px-4 py-3 text-left font-semibold text-slate-900">Nom</th>
                         <th scope="col" class="px-4 py-3 text-left font-semibold text-slate-900">Prénom</th>
                         <th scope="col" class="px-4 py-3 text-left font-semibold text-slate-900">Email</th>
+                        <th scope="col" class="px-4 py-3 text-left font-semibold text-slate-900">Statut</th>
                         <th scope="col" class="px-4 py-3 text-left font-semibold text-slate-900">Laboratoire</th>
                         <th scope="col" class="px-4 py-3 text-left font-semibold text-slate-900">Établissement</th>
                         <th scope="col" class="px-4 py-3 text-left font-semibold text-slate-900">CV</th>
@@ -168,6 +171,10 @@ if ((int) get_field('cand_plateformes') === 1) {
                             <?php else: ?>
                             <span class="text-slate-400">—</span>
                             <?php endif; ?>
+                        </td> 
+
+                        <td class="whitespace-nowrap px-4 py-3 text-slate-900">
+                            <?php echo esc_html($r['statut']); ?>
                         </td>
 
                         <td class="px-4 py-3 text-slate-900">
