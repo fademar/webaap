@@ -33,7 +33,7 @@
         <div class="text-xs text-gray-400">
             <p>
                 &copy; <?php echo date('Y'); ?> 
-                <span class="font-semibold text-gray-500"><?php bloginfo('name'); ?></span>. 
+                <span class="font-semibold text-gray-500">MSH Paris-Saclay</span>. 
                 Tous droits réservés.
             </p>
         </div>
