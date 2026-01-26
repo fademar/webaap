@@ -123,9 +123,38 @@ while ( have_posts() ) : the_post();
                       Exporter (PDF)
                   </span>
               </a>
-              <button class="rounded-lg border px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 cursor-pointer">
+              <?php
+              // Récupération de tous les emails de l'équipe
+              $all_emails = [];
+              
+              // Email du porteur principal
+              $porteur = get_field('proj_porteur');
+              if (is_array($porteur) && !empty($porteur['email'])) {
+                  $all_emails[] = $porteur['email'];
+              }
+              
+              // Emails des co-porteurs
+              $porteurs = get_field('proj_porteurs');
+              if (is_array($porteurs)) {
+                  foreach ($porteurs as $p) {
+                      if (is_array($p) && !empty($p['email'])) {
+                          $all_emails[] = $p['email'];
+                      }
+                  }
+              }
+              
+              // Référence du projet
+              $proj_ref = get_field('proj_ref');
+              
+              // Construction du lien mailto
+              $mailto_to = implode(',', array_unique($all_emails));
+              $mailto_subject = 'MSH Paris-Saclay - Votre projet ' . ($proj_ref ? $proj_ref : 'référencé');
+              $mailto_link = 'mailto:' . $mailto_to . '?subject=' . rawurlencode($mailto_subject);
+              ?>
+              <a href="<?php echo esc_attr($mailto_link); ?>" 
+                 class="block text-center rounded-lg border px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
                 Contacter les porteurs
-              </button>
+              </a>
             </div>
         </nav>
     </div>
