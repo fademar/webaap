@@ -860,22 +860,15 @@ function mshps_create_keywords_on_draft_save($submit) {
  * avec les données de l'utilisateur connecté dans le formulaire de candidature
  * 
  * Note : Le filtre est dynamique basé sur MSHPS_WSFORM_CANDIDATURE_ID
- * Champs utilisés : Nom, Prénom, Email, Laboratoire, Établissement, Statut
+ * Champs utilisés : Statut (via JavaScript car source ACF)
  * 
- * Note : Le champ Statut nécessite un pré-remplissage JavaScript car il utilise
- * ACF comme source de données, ce qui empêche les variables WS Form de fonctionner
+ * Les autres champs (Nom, Prénom, etc.) sont désactivés pour éviter
+ * le pré-remplissage des co-porteurs dans les sections répétables
  */
-add_action( 'init', function() {
-    // Construire le nom du hook dynamiquement
-    $form_id = defined( 'MSHPS_WSFORM_CANDIDATURE_ID' ) ? MSHPS_WSFORM_CANDIDATURE_ID : 8;
-    $hook = 'wsf_pre_render_' . $form_id;
-    add_filter( $hook, 'mshps_prefill_user_info_in_form', 10, 2 );
-} );
 
 /**
  * Script JavaScript pour pré-sélectionner le champ Statut
  * Nécessaire car le champ utilise ACF comme source de données dynamique
- * et WS Form écrase les valeurs par défaut PHP lors du chargement
  */
 add_action( 'wp_enqueue_scripts', function() {
     if (!is_user_logged_in()) {
@@ -917,46 +910,6 @@ add_action( 'wp_enqueue_scripts', function() {
     
     wp_add_inline_script('jquery', $script);
 } );
-
-function mshps_prefill_user_info_in_form($form, $preview) {
-    // Ne pré-remplir que si l'utilisateur est connecté
-    if (!is_user_logged_in()) {
-        return $form;
-    }
-    
-    $current_user = wp_get_current_user();
-    
-    // Récupérer les IDs de champs depuis les constantes
-    $field_nom = defined( 'MSHPS_WSFORM_FIELD_NOM' ) ? MSHPS_WSFORM_FIELD_NOM : 233;
-    $field_prenom = defined( 'MSHPS_WSFORM_FIELD_PRENOM' ) ? MSHPS_WSFORM_FIELD_PRENOM : 234;
-    $field_email = defined( 'MSHPS_WSFORM_FIELD_EMAIL' ) ? MSHPS_WSFORM_FIELD_EMAIL : 235;
-    $field_labo = defined( 'MSHPS_WSFORM_FIELD_LABORATOIRE' ) ? MSHPS_WSFORM_FIELD_LABORATOIRE : 236;
-    $field_etab = defined( 'MSHPS_WSFORM_FIELD_ETABLISSEMENT' ) ? MSHPS_WSFORM_FIELD_ETABLISSEMENT : 237;
-    
-    // Préparer les données utilisateur à pré-remplir
-    $user_data = array(
-        $field_nom => $current_user->last_name,
-        $field_prenom => $current_user->first_name,
-        $field_email => $current_user->user_email,
-        $field_labo => get_user_meta($current_user->ID, 'laboratoire', true),
-        $field_etab => get_user_meta($current_user->ID, 'etablissement', true),
-    );
-    
-    // Parcourir tous les champs du formulaire pour les pré-remplir
-    foreach ($form->groups as $group) {
-        foreach ($group->sections as $section) {
-            foreach ($section->fields as $field) {
-                if (isset($user_data[$field->id]) && $user_data[$field->id] !== '' && $user_data[$field->id] !== null) {
-                    // Utiliser ->meta->default_value comme recommandé par la doc WS Form
-                    $field->meta->default_value = $user_data[$field->id];
-                }
-            }
-        }
-    }
-    
-    return $form;
-}
-
 /**
  * Hook WS Form : Déclenche la génération de référence APRES soumission
  * Priorité 50 : Indispensable pour que les taxonomies (Vague/Type) soient déjà là.
