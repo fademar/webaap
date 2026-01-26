@@ -50,10 +50,6 @@ $seances    = get_field('cand_seances'); // repeater (array)
           <div class="prose prose-slate max-w-none">
             <?php echo $lieu_event === 'autre' ? esc_html($autre_lieu) : '<span class="text-slate-400">ENS</span>'; ?>
           </div>
-
-          <?php if ($autre_lieu): ?>
-            <div class="text-slate-600">Autre lieu : <?php echo esc_html($autre_lieu); ?></div>
-          <?php endif; ?>
       </div>
 
     <?php elseif ($ptype === 'se'): ?>
