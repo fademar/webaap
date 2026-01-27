@@ -767,10 +767,13 @@ function mshps_aap_delete_draft( WP_REST_Request $request ) {
  * 
  * Utilise les vrais hooks WS Form : wsf_submit_create et wsf_submit_update
  */
-add_action('wsf_submit_create', 'mshps_create_keywords_on_draft_save', 10, 1);
-add_action('wsf_submit_update', 'mshps_create_keywords_on_draft_save', 10, 1);
+// Désactivé : WS Form gère maintenant les taxonomies nativement
+// add_action('wsf_submit_create', 'mshps_create_keywords_on_draft_save', 10, 1);
+// add_action('wsf_submit_update', 'mshps_create_keywords_on_draft_save', 10, 1);
 
 function mshps_create_keywords_on_draft_save($submit) {
+    // Fonction désactivée - WS Form gère les taxonomies nativement
+    return;
     global $wpdb;
     
     // IMPORTANT : Ne traiter que les brouillons, pas les soumissions finales
