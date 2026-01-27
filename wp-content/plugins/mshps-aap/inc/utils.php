@@ -1935,3 +1935,98 @@ function mshps_log_projet_submission($new_status, $old_status, $post) {
         }
     }
 }
+
+/**
+ * Envoyer un email de notification à l'équipe lors des changements de statut
+ */
+add_action('transition_post_status', 'mshps_notify_team_status_change', 10, 3);
+function mshps_notify_team_status_change($new_status, $old_status, $post) {
+    // Uniquement pour les projets
+    if ($post->post_type !== 'projet') {
+        return;
+    }
+    
+    // Statuts qui déclenchent une notification
+    $notifiable_statuses = ['projet-depose', 'projet-instruction', 'projet-evaluation'];
+    
+    // Vérifier que c'est un changement vers un statut notifiable
+    if (!in_array($new_status, $notifiable_statuses) || $old_status === $new_status) {
+        return;
+    }
+    
+    // Récupérer les données du projet
+    $projet_id = $post->ID;
+    $projet_titre = $post->post_title;
+    $projet_ref = get_field('proj_ref', $projet_id);
+    
+    // Récupérer tous les emails de l'équipe
+    $emails = [];
+    
+    // Email du porteur principal
+    $porteur = get_field('proj_porteur', $projet_id);
+    if ($porteur && !empty($porteur['email'])) {
+        $emails[] = $porteur['email'];
+    }
+    
+    // Emails des co-porteurs
+    $co_porteurs = get_field('proj_porteurs', $projet_id);
+    if (is_array($co_porteurs)) {
+        foreach ($co_porteurs as $cp) {
+            if (!empty($cp['email'])) {
+                $emails[] = $cp['email'];
+            }
+        }
+    }
+    
+    // Dédupliquer les emails
+    $emails = array_unique($emails);
+    
+    if (empty($emails)) {
+        return; // Pas d'emails à envoyer
+    }
+    
+    // Déterminer les libellés de statuts
+    $statuses_labels = [
+        'projet-depose' => 'Déposé',
+        'projet-instruction' => 'En instruction',
+        'projet-evaluation' => 'En évaluation',
+        'projet-labellise' => 'Labellisé',
+        'projet-en-cours' => 'En cours',
+        'projet-non-retenu' => 'Non retenu',
+        'projet-cloture' => 'Clôturé',
+    ];
+    
+    $old_status_label = $statuses_labels[$old_status] ?? $old_status;
+    $new_status_label = $statuses_labels[$new_status] ?? $new_status;
+    
+    // Construction du message
+    if (in_array($old_status, ['draft', 'auto-draft']) && $new_status === 'projet-depose') {
+        // Premier dépôt
+        $sujet = 'Votre projet a bien été déposé - Réf. ' . $projet_ref;
+        $message = "Bonjour,\n\n";
+        $message .= "Votre projet \"$projet_titre\" a bien été enregistré auprès de la MSH Paris-Saclay.\n\n";
+        $message .= "Référence : $projet_ref\n";
+        $message .= "Date de dépôt : " . date_i18n('d/m/Y à H:i') . "\n\n";
+        $message .= "Vous pouvez suivre l'avancement de votre projet à tout moment sur votre espace personnel.\n\n";
+        $message .= "Cordialement,\n";
+        $message .= "L'équipe MSH Paris-Saclay";
+    } else {
+        // Changement de statut
+        $sujet = 'Mise à jour de votre projet ' . $projet_ref;
+        $message = "Bonjour,\n\n";
+        $message .= "Le statut de votre projet \"$projet_titre\" a été mis à jour.\n\n";
+        $message .= "Référence : $projet_ref\n";
+        $message .= "Nouveau statut : $new_status_label\n\n";
+        $message .= "Vous pouvez consulter votre projet sur votre espace personnel pour plus de détails.\n\n";
+        $message .= "Cordialement,\n";
+        $message .= "L'équipe MSH Paris-Saclay";
+    }
+    
+    // Headers pour texte simple
+    $headers = ['Content-Type: text/plain; charset=UTF-8'];
+    
+    // Envoi à tous les membres de l'équipe
+    foreach ($emails as $email) {
+        wp_mail($email, $sujet, $message, $headers);
+    }
+}
