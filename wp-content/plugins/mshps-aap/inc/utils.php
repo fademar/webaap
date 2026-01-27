@@ -1916,3 +1916,22 @@ function mshps_handle_download_cvs() {
     unlink($tmp_file);
     exit;
 }
+
+/**
+ * Logger la soumission initiale d'un projet
+ * Se déclenche quand le projet passe de draft à un statut "déposé"
+ */
+add_action('transition_post_status', 'mshps_log_projet_submission', 10, 3);
+function mshps_log_projet_submission($new_status, $old_status, $post) {
+    // Uniquement pour les projets
+    if ($post->post_type !== 'projet') {
+        return;
+    }
+    
+    // Logger quand le projet passe de draft/auto-draft à "projet-depose"
+    if (in_array($old_status, ['draft', 'auto-draft']) && $new_status === 'projet-depose') {
+        if (function_exists('mshps_log_projet_event')) {
+            mshps_log_projet_event($post->ID, 'submission', 'Projet déposé par le porteur');
+        }
+    }
+}

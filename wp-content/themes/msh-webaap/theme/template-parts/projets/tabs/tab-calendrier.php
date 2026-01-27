@@ -62,6 +62,7 @@ $seances    = get_field('cand_seances'); // repeater (array)
               $d = $s['date']  ?? '';
               $t = $s['titre'] ?? '';
               $l = $s['lieu']  ?? '';
+              $r = $s['resume_court'] ?? '';
             ?>
             <div class="flex flex-col gap-1 rounded-lg border border-slate-200 bg-slate-50 p-3">
               <div class="flex items-baseline gap-2">
@@ -77,6 +78,10 @@ $seances    = get_field('cand_seances'); // repeater (array)
 
               <?php if ($l): ?>
                 <div class="text-slate-600"><?php echo esc_html($l); ?></div>
+              <?php endif; ?>
+
+              <?php if ($r): ?>
+                <div class="text-slate-600"><?php echo esc_html($r); ?></div>
               <?php endif; ?>
             </div>
           <?php endforeach; ?>
