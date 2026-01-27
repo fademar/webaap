@@ -29,41 +29,6 @@ $shortcode = '[ws_form id="' . $contact_form_id . '"]';
                 </p>
             </div>
 
-            <!-- Informations de contact -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                
-                <!-- Email -->
-                <div class="bg-slate-50 rounded-xl p-6 flex items-start">
-                    <div class="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
-                        <i class="fa-solid fa-envelope text-blue-600 text-xl"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-semibold text-gray-900 mb-1">Email</h3>
-                        <?php 
-                        $email = 'aap@msh-paris-saclay.fr';
-                        $encoded_email = antispambot($email);
-                        ?>
-                        <a href="mailto:<?php echo antispambot($email); ?>" class="text-sm text-primaire hover:underline">
-                            <?php echo $encoded_email; ?>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Téléphone -->
-                <div class="bg-slate-50 rounded-xl p-6 flex items-start">
-                    <div class="flex-shrink-0 w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
-                        <i class="fa-solid fa-phone text-green-600 text-xl"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-semibold text-gray-900 mb-1">Téléphone</h3>
-                        <a href="tel:+33000000000" class="text-sm text-primaire hover:underline">
-                            01 00 00 00 00
-                        </a>
-                    </div>
-                </div>
-
-            </div>
-
             <!-- Formulaire de contact -->
             <div class="border-t border-gray-100 pt-8">
                 <h2 class="text-lg font-bold text-gray-900 mb-6">Envoyez-nous un message</h2>
