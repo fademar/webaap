@@ -24,4 +24,19 @@ function msh_restrict_upload_mimes( $mimes ) {
 
     return $mimes;
 }
+
+
+add_filter( 'upload_size_limit', 'msh_filter_site_upload_size_limit', 20 );
+
+function msh_filter_site_upload_size_limit( $size ) {
+    // 1. Si c'est un administrateur, on ne change rien (on retourne la limite du serveur)
+    if ( current_user_can( 'manage_options' ) ) {
+        return $size;
+    }
+
+    // 2. Pour TOUS les autres (chercheurs, porteurs...), on impose une limite stricte
+    // Exemple : 5 Mo (5 * 1024 * 1024)
+    // Tu peux mettre 2 Mo (2 * 1024 * 1024) si tu veux être plus strict sur les images
+    return 2 * 1024 * 1024;
+}
 ?>
