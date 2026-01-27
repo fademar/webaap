@@ -5,7 +5,8 @@
  */
 
 if ( ! is_user_logged_in() ) {
-    auth_redirect();
+    wp_safe_redirect(home_url('/'));
+    exit;
 }
 
 // Vérifier les droits d'accès (équipe MSH uniquement)

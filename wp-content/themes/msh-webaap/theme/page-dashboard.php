@@ -4,7 +4,8 @@
  */
 
 if ( ! is_user_logged_in() ) {
-    auth_redirect();
+    wp_safe_redirect(home_url('/'));
+    exit;
 }
 
 // Accès équipe MSH (et admins) : capacité "edit_others_posts"

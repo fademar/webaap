@@ -5,7 +5,8 @@
 
 // Sécurité : Redirection si non connecté
 if ( ! is_user_logged_in() ) {
-    auth_redirect();
+    wp_safe_redirect(home_url('/'));
+    exit;
 }
 
 // WS Form gère ses propres headers, on peut retirer acf_form_head()

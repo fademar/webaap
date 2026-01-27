@@ -4,7 +4,10 @@
  * Template Post Type: projet
  */
 
-if ( ! is_user_logged_in() ) auth_redirect();
+if ( ! is_user_logged_in() ) {
+    wp_safe_redirect(home_url('/'));
+    exit;
+}
 
 // --- LOGIQUE METIER (Droits, etc.) ---
 $user_id = get_current_user_id();
