@@ -35,7 +35,5 @@ require_once MSHPS_AAP_PLUGIN_DIR . 'inc/users.php'; // Création des rôles cus
 require_once MSHPS_AAP_PLUGIN_DIR . 'inc/utils.php'; // log, génération de la référence de projet
 require_once MSHPS_AAP_PLUGIN_DIR . 'inc/cron.php'; // gestion des vagues
 require_once MSHPS_AAP_PLUGIN_DIR . 'inc/display-functions.php'; // Fonctions métiers (Application de la référence au passage en instruction, etc.)
-// (optionnel)
-// require_once MSHPS_AAP_PLUGIN_DIR . 'inc/emails.php';
-// require_once MSHPS_AAP_PLUGIN_DIR . 'inc/storage.php';
+require_once MSHPS_AAP_PLUGIN_DIR . 'inc/security.php';
 
