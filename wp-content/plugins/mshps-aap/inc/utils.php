@@ -1999,31 +1999,54 @@ function mshps_notify_team_status_change($new_status, $old_status, $post) {
     $old_status_label = $statuses_labels[$old_status] ?? $old_status;
     $new_status_label = $statuses_labels[$new_status] ?? $new_status;
     
+    // URL du projet
+    $projet_url = get_permalink($projet_id);
+    
+    // Prénom du porteur pour personnalisation
+    $prenom_porteur = $porteur['prenom'] ?? '';
+    $salutation = $prenom_porteur ? "Bonjour $prenom_porteur," : "Bonjour,";
+    
     // Construction du message
     if (in_array($old_status, ['draft', 'auto-draft']) && $new_status === 'projet-depose') {
         // Premier dépôt
-        $sujet = 'Votre projet a bien été déposé - Réf. ' . $projet_ref;
-        $message = "Bonjour,\n\n";
-        $message .= "Votre projet \"$projet_titre\" a bien été enregistré auprès de la MSH Paris-Saclay.\n\n";
-        $message .= "Référence : $projet_ref\n";
-        $message .= "Date de dépôt : " . date_i18n('d/m/Y à H:i') . "\n\n";
-        $message .= "Vous pouvez suivre l'avancement de votre projet à tout moment sur votre espace personnel.\n\n";
+        $sujet = 'Confirmation de dépôt - Projet ' . $projet_ref . ' - MSH Paris-Saclay';
+        $message = "$salutation\n\n";
+        $message .= "Nous vous confirmons la bonne réception de votre projet \"$projet_titre\".\n\n";
+        $message .= "INFORMATIONS :\n";
+        $message .= "- Référence : $projet_ref\n";
+        $message .= "- Date de dépôt : " . date_i18n('d/m/Y à H:i') . "\n";
+        $message .= "- Statut : Déposé\n\n";
+        $message .= "Vous pouvez consulter et suivre votre projet à tout moment :\n";
+        $message .= "$projet_url\n\n";
+        $message .= "Notre équipe examinera votre dossier prochainement. Vous serez notifié par email à chaque étape du processus.\n\n";
         $message .= "Cordialement,\n";
-        $message .= "L'équipe MSH Paris-Saclay";
+        $message .= "L'équipe MSH Paris-Saclay\n\n";
+        $message .= "---\n";
+        $message .= "Cet email est envoyé automatiquement, merci de ne pas y répondre.\n";
+        $message .= "Pour toute question : aap@msh-paris-saclay.fr";
     } else {
         // Changement de statut
-        $sujet = 'Mise à jour de votre projet ' . $projet_ref;
-        $message = "Bonjour,\n\n";
+        $sujet = 'Mise à jour - Projet ' . $projet_ref . ' - MSH Paris-Saclay';
+        $message = "$salutation\n\n";
         $message .= "Le statut de votre projet \"$projet_titre\" a été mis à jour.\n\n";
-        $message .= "Référence : $projet_ref\n";
-        $message .= "Nouveau statut : $new_status_label\n\n";
-        $message .= "Vous pouvez consulter votre projet sur votre espace personnel pour plus de détails.\n\n";
+        $message .= "INFORMATIONS :\n";
+        $message .= "- Référence : $projet_ref\n";
+        $message .= "- Nouveau statut : $new_status_label\n\n";
+        $message .= "Consultez votre projet pour plus de détails :\n";
+        $message .= "$projet_url\n\n";
         $message .= "Cordialement,\n";
-        $message .= "L'équipe MSH Paris-Saclay";
+        $message .= "L'équipe MSH Paris-Saclay\n\n";
+        $message .= "---\n";
+        $message .= "Cet email est envoyé automatiquement, merci de ne pas y répondre.\n";
+        $message .= "Pour toute question : aap@msh-paris-saclay.fr";
     }
     
-    // Headers pour texte simple
-    $headers = ['Content-Type: text/plain; charset=UTF-8'];
+    // Headers pour texte simple + From/Reply-To
+    $headers = [
+        'Content-Type: text/plain; charset=UTF-8',
+        'From: MSH Paris-Saclay <aap@msh-paris-saclay.fr>',
+        'Reply-To: aap@msh-paris-saclay.fr'
+    ];
     
     // Envoi à tous les membres de l'équipe
     foreach ($emails as $email) {
