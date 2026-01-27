@@ -2032,8 +2032,6 @@ function mshps_notify_team_status_change($new_status, $old_status, $post) {
         $message .= "INFORMATIONS :\n";
         $message .= "- Référence : $projet_ref\n";
         $message .= "- Nouveau statut : $new_status_label\n\n";
-        $message .= "Consultez votre projet pour plus de détails :\n";
-        $message .= "$projet_url\n\n";
         $message .= "Cordialement,\n";
         $message .= "L'équipe MSH Paris-Saclay\n\n";
         $message .= "---\n";
