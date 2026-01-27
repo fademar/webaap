@@ -12,7 +12,7 @@ echo $js_code;
 }
 
 
-// 1. LE PLANIFICATEUR (inchangé)
+// 1. LE PLANIFICATEUR
 add_action( 'init', 'msh_schedule_wave_cron' );
 function msh_schedule_wave_cron() {
     if ( ! wp_next_scheduled( 'msh_event_daily_wave_check' ) ) {
@@ -20,7 +20,7 @@ function msh_schedule_wave_cron() {
     }
 }
 
-// 2. L'EXÉCUTEUR (Logique Highlander simplifiée et blindée)
+// 2. L'EXÉCUTEUR
 add_action( 'msh_event_daily_wave_check', 'msh_run_daily_wave_logic' );
 
 function msh_run_daily_wave_logic() {

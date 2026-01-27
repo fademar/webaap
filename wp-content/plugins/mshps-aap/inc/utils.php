@@ -1074,6 +1074,7 @@ function mshps_render_printable_dossier() {
     $sections['proj_interdisciplinarite'] = 'Dimension interdisciplinaire';
     $sections['proj_partenariat']         = 'Partenariat inter-institutionnel';
 
+    mshps_log_projet_event( $project_id, 'export_pdf', 'PDF exporté');
     
     // --- DÉBUT DU HTML ---
     ?>
@@ -1894,9 +1895,8 @@ function mshps_handle_download_cvs() {
     }
 
     // Log & Download headers...
-    if (function_exists('msh_add_history_log')) {
-        msh_add_history_log($project_id, "Téléchargement des CVs (ZIP)", 'file');
-    }
+    mshps_log_projet_event( $projet_id, 'attachment', 'Téléchargement des CVs (ZIP)');
+
 
     header('Pragma: public');
     header('Expires: 0');
