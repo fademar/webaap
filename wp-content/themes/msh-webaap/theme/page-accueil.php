@@ -52,7 +52,7 @@ if ( ! empty($terms) && ! is_wp_error($terms) ) {
                 Plateforme des appels à projets
             </h1>
             <p class="text-lg text-gray-600">
-                Connectez-vous et gérez vos candidatures aux appels à projets de la MSH Paris-Saclay ou <a href="/inscription/" class="text-blue-600 hover:underline">inscrivez-vous</a> pour créer un compte.
+                Connectez-vous et gérez vos candidatures aux appels à projets de la MSH Paris-Saclay ou <a href="/inscription/" class="text-blue-600 hover:underline">inscrivez-vous</a> pour créer un compte (un seul compte par équipe).
             </p>
         </div>
         <div class="mb-6 text-center">   
@@ -71,6 +71,7 @@ if ( ! empty($terms) && ! is_wp_error($terms) ) {
                         </span>
                     <?php endif; ?>
                 </div>
+
 
             <?php else : ?>
                 <div class="inline-flex items-center bg-red-50 border border-red-100 rounded-full px-4 py-2 text-sm text-red-600">

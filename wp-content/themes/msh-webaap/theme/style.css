@@ -1960,6 +1960,9 @@ form[data-id="9"] fieldset.wsf-section {
 .ml-2 {
   margin-left: calc(var(--spacing) * 2);
 }
+.ml-3 {
+  margin-left: calc(var(--spacing) * 3);
+}
 .ml-4 {
   margin-left: calc(var(--spacing) * 4);
 }
@@ -2382,6 +2385,10 @@ form[data-id="9"] fieldset.wsf-section {
   border-top-left-radius: var(--radius-xl);
   border-top-right-radius: var(--radius-xl);
 }
+.rounded-r-lg {
+  border-top-right-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+}
 .border {
   border-style: var(--tw-border-style);
   border-width: 1px;
@@ -2414,6 +2421,10 @@ form[data-id="9"] fieldset.wsf-section {
   border-left-style: var(--tw-border-style);
   border-left-width: 2px;
 }
+.border-l-4 {
+  border-left-style: var(--tw-border-style);
+  border-left-width: 4px;
+}
 .border-dashed {
   --tw-border-style: dashed;
   border-style: dashed;
@@ -2442,6 +2453,9 @@ form[data-id="9"] fieldset.wsf-section {
 }
 .border-blue-400 {
   border-color: var(--color-blue-400);
+}
+.border-blue-500 {
+  border-color: var(--color-blue-500);
 }
 .border-cyan-200 {
   border-color: var(--color-cyan-200);
@@ -2991,6 +3005,9 @@ form[data-id="9"] fieldset.wsf-section {
 }
 .text-blue-400 {
   color: var(--color-blue-400);
+}
+.text-blue-500 {
+  color: var(--color-blue-500);
 }
 .text-blue-600 {
   color: var(--color-blue-600);
